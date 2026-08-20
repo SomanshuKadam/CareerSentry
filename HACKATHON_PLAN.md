@@ -2,7 +2,7 @@
 
 Last updated: 2026-08-21 (Asia/Calcutta)
 
-Status: Public fixture and custom collector verified; layout-A recovered; layout-B incident detected but repair failed safely; submission integration continuing
+Status: Public repository, Vercel fixture, and custom collector verified; layout-A recovered; layout-B incident detected but repair failed safely
 
 Repository: https://github.com/SomanshuKadam/CareerSentry
 
@@ -628,3 +628,9 @@ Target length: approximately three minutes.
 - Scraper Studio returned `status=failed` while approving the layout-B repair and explicitly reported that collector `c_mt1wzptjco00s7w0p` was unchanged. No further live heal was attempted.
 - Final accounting still reported $52.00 balance, $0.00 pending charge, $0.00 zone cost, and 0 B. Credit conversion remains unavailable; exact build/run/heal counts above are the controlling usage ledger.
 - Added sanitized recovered/degraded evidence, a strict raw-to-canonical ingestion adapter, and integration tests proving the recovered three rows are accepted while the zero-row layout-B snapshot is degraded. Final verification: TypeScript passed, 24 Vitest tests passed across 8 files, and the 21-page production build passed.
+
+### 2026-08-21 - First public repository implementation published
+
+- Created root commit `44218fb` with the application, canonical plan, research, tests, and sanitized Scraper Studio evidence.
+- Pushed `main` to `https://github.com/SomanshuKadam/CareerSentry` and configured the local branch to track `origin/main`.
+- The pre-commit credential scan found no API token, credential-shaped UUID, `.env` secret file, personal data, resume, or private job-search output. Only documented placeholders are present.

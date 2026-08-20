@@ -1,0 +1,29 @@
+[
+  {
+    "job_id_value": "CS-102",
+    "title": "Software Engineer II",
+    "location": "Remote, India",
+    "department": "Platform",
+    "employment_type": "Remote",
+    "company_job_url": "https://career-sentry.vercel.app/demo-target/jobs/CS-102?layout=a",
+    "input": { "url": "https://career-sentry.vercel.app/demo-target?layout=a" }
+  },
+  {
+    "job_id_value": "CS-101",
+    "title": "Backend Engineer",
+    "location": "Bangalore, Karnataka, India",
+    "department": "Engineering",
+    "employment_type": "Hybrid",
+    "company_job_url": "https://career-sentry.vercel.app/demo-target/jobs/CS-101?layout=a",
+    "input": { "url": "https://career-sentry.vercel.app/demo-target?layout=a" }
+  },
+  {
+    "job_id_value": "CS-103",
+    "title": "Data Quality Engineer",
+    "location": "Bengaluru, Karnataka, India",
+    "department": "Data",
+    "employment_type": "Onsite",
+    "company_job_url": "https://career-sentry.vercel.app/demo-target/jobs/CS-103?layout=a",
+    "input": { "url": "https://career-sentry.vercel.app/demo-target?layout=a" }
+  }
+]

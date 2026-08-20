@@ -1,0 +1,24 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Dependencies and builds
+node_modules/
+.next/
+.vercel/
+dist/
+coverage/
+*.tsbuildinfo
+
+# Logs and local data
+*.log
+*.sqlite
+*.sqlite3
+data/private/
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

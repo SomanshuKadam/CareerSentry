@@ -3,8 +3,8 @@ import { AppShell } from "@/components/app-shell";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "CareerSentry · Career intelligence",
-  description: "Provenance-aware, self-healing career intelligence.",
+  title: "CareerSentry · Reliable career data",
+  description: "Public job data with source provenance and collector reliability checks.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

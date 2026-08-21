@@ -1,19 +1,22 @@
-import { RefreshCw, SlidersHorizontal } from "lucide-react";
-import { Button, PageHeader } from "@/components/ui";
 import { JobsView } from "@/components/jobs-view";
 import { getDashboardData } from "@/lib/dashboard-data";
 
 export const dynamic = "force-dynamic";
 
 export default async function JobsPage() {
-  const { jobs, sourceLabel } = await getDashboardData();
+  const { jobs, model } = await getDashboardData();
+  const sourceText = model.source.isPersisted
+    ? "the stored last-known-good snapshot"
+    : "the saved verified RevRag run";
+
   return (
-    <>
-      <PageHeader eyebrow="Verified role catalog" title="Jobs" description={`${jobs.length} active RevRag AI roles from ${sourceLabel}. Every row keeps its same-origin source and collector trail; application routes are excluded.`}>
-        <Button variant="secondary" icon={SlidersHorizontal}>Tune matching</Button>
-        <Button icon={RefreshCw}>Review snapshot</Button>
-      </PageHeader>
-      <JobsView jobs={jobs} sourceLabel={sourceLabel} />
-    </>
+    <div className="product-page">
+      <header className="page-lead">
+        <p className="eyebrow">Real public data</p>
+        <h1>RevRag AI jobs</h1>
+        <p>{jobs.length} active roles from {sourceText}. Application-form links are intentionally excluded.</p>
+      </header>
+      <JobsView jobs={jobs} sourceLabel={model.source.label} />
+    </div>
   );
 }

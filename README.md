@@ -2,7 +2,7 @@
 
 CareerSentry is a provenance-aware, self-healing career intelligence agent for the [Into the Scrape-Verse](https://www.wemakedevs.org/hackathons/scrape-verse) hackathon. It keeps official career paths, normalized job records, collector health, and bounded healing evidence visible in one workspace.
 
-> Current state: collector `c_mt3ctgtj2rqnwsqm8p` was run against the public RevRag AI careers catalog. Its initial saved run returned 15 entries (10 valid active roles and 5 rejected error envelopes); an approval-gated cleanup was saved on the same Collector ID and verification returned 10 clean rows. The dashboard reads sanitized saved evidence and makes no live Bright Data requests or claims a persistent feed or schedule. The separate CareerSentry-owned layout A/B catalog remains the deterministic healing lab, with layout B unresolved.
+> Current state: collector `c_mt3ctgtj2rqnwsqm8p` was run against the public RevRag AI careers catalog. Its initial saved run returned 15 entries (10 valid active roles and 5 rejected error envelopes); an approval-gated cleanup was saved on the same Collector ID and verification returned 10 clean rows. A protected Collector-ID API, atomic PostgreSQL persistence boundary, and runtime dashboard read model are implemented. Without `DATABASE_URL`, the dashboard truthfully falls back to sanitized saved evidence and the route refuses to trigger collection. The separate CareerSentry-owned layout A/B catalog remains the deterministic healing lab, with layout B unresolved.
 
 ## What is implemented
 
@@ -12,8 +12,10 @@ CareerSentry is a provenance-aware, self-healing career intelligence agent for t
 - A clear source registry separating saved RevRag run/recovery evidence from the CareerSentry-owned healing lab.
 - Strict Zod `JobRecord` contract, location normalization, URL/job-ID deduplication, and lifecycle helpers.
 - Collector health checks for count drift, required fields, duplicates, pagination, schema, details, and application actions.
-- Server-side Bright Data client code with bounded input validation; the dashboard reads saved evidence and does not call the live service.
-- Project-owned public layout A/B catalog with three fixture roles for deterministic healing tests.
+- Server-side Bright Data client code with bounded input validation and an authenticated fixed-target route that fails closed unless durable storage is configured.
+- Provider-neutral PostgreSQL/Drizzle schema and migration for collector runs, canonical jobs, and sanitized health incidents. Healthy runs commit atomically; degraded runs never replace last-known-good jobs.
+- Runtime dashboard read model that prefers the persisted last-known-good snapshot and otherwise labels the bundled evidence fallback explicitly.
+- Project-owned public layout A/B catalog plus stable server-rendered `/demo-target/live` input, controlled only by `CAREERSENTRY_FIXTURE_LAYOUT`.
 - Approval-gated same-collector healing evidence. The layout B repair remains visibly rejected after saved-template verification failed.
 - Read-only target research under `docs/`; researched targets are not represented as collected jobs in the UI.
 
@@ -42,6 +44,8 @@ Copy `.env.example` to `.env.local` and fill it locally only after a target is a
 
 ```env
 BRIGHT_DATA_API_TOKEN=...
+CAREERSENTRY_RUN_KEY=...
+DATABASE_URL=postgresql://...
 BRIGHT_DATA_DISCOVERY_COLLECTOR_ID=c_...
 BRIGHT_DATA_PDP_COLLECTOR_ID=c_...
 ```
@@ -55,11 +59,11 @@ official catalog -> Discovery collector -> normalized snapshot
                                       -> PDP only for new/changed job URLs
 ```
 
-The application client enforces at most ten inputs in one run. The current UI state is a saved run/recovery view; it does not execute a live request or claim a persistent schedule.
+The application client enforces at most ten inputs in one run. Dashboard page loads never execute collection: they read a stored last-known-good snapshot when PostgreSQL is configured or use the labeled saved-evidence fallback.
 
 ### Protected RevRag collection route
 
-`POST /api/admin/collect/revrag` is disabled by default. It runs only when both the server-only `CAREERSENTRY_RUN_KEY` and `BRIGHT_DATA_API_TOKEN` are configured. The route uses a timing-safe run-key comparison, ignores request-body target fields, and always fixes the one input to `https://www.revrag.ai/careers` and the collector to `c_mt3ctgtj2rqnwsqm8p`.
+`POST /api/admin/collect/revrag` is disabled by default. It runs only when the server-only `CAREERSENTRY_RUN_KEY`, `BRIGHT_DATA_API_TOKEN`, and `DATABASE_URL` are configured. The route uses a timing-safe run-key comparison, ignores request-body target fields, and always fixes the one input to `https://www.revrag.ai/careers` and the collector to `c_mt3ctgtj2rqnwsqm8p`. Missing storage is checked before the Bright Data trigger, preventing an unstorable credit-consuming run.
 
 Use a placeholder key in local documentation; never put a real key or token in source control:
 
@@ -70,7 +74,13 @@ curl -X POST http://localhost:3000/api/admin/collect/revrag \
   --data '{}'
 ```
 
-Responses are `Cache-Control: no-store`; unauthenticated or unavailable configuration fails safely, and a non-healthy snapshot returns no partial records. The route does not write durable storage—persistence remains pending.
+Responses are `Cache-Control: no-store`; unauthenticated or unavailable configuration fails safely. A healthy snapshot writes its run and canonical jobs in one transaction before success is returned. A degraded/rejected result stores a sanitized run and incident but no partial canonical jobs.
+
+Initialize a configured database with the checked-in migration:
+
+```bash
+npm run db:migrate
+```
 
 ## Evidence
 
@@ -102,7 +112,7 @@ Discovery collector evidence
          dashboard              healing incident/evidence
 ```
 
-The project-owned `/demo-target` route supplies controlled layout A/B markup for the healing lab. It is not an external employer catalog.
+The project-owned `/demo-target` route supplies inspectable query-based evidence. `/demo-target/live` is the stable scraper input: its materially different A/B markup is selected server-side through `CAREERSENTRY_FIXTURE_LAYOUT`, defaults to A, and cannot be overridden by query parameters. Neither route is an external employer catalog.
 
 ## Target policy
 
@@ -115,7 +125,7 @@ Public visibility is not treated as permission. Before any future real collectio
 - one-input credit and budget gate; and
 - schema, provenance, and personal-data exclusion checks.
 
-The current RevRag records reflect a completed run and approval-gated same-ID cleanup from this workspace. The initial degraded result and recovered 10-row verification are retained as saved evidence; they must not be interpreted as permission to rerun collection. The dashboard currently reads those saved records and does not claim a persistent live feed or schedule. Other target research remains policy evidence only and is intentionally absent from the jobs, companies, collectors, runs, and incidents shown by the app.
+The current RevRag records reflect a completed run and approval-gated same-ID cleanup from this workspace. The initial degraded result and recovered 10-row verification are retained as saved evidence; they must not be interpreted as permission to rerun collection. When PostgreSQL is unconfigured, the dashboard labels and reads those saved records; when configured, it prefers the persisted last-known-good snapshot and exposes only sanitized run/incident metadata. Other target research remains policy evidence only and is intentionally absent from the product data.
 
 ## AI usage disclosure
 

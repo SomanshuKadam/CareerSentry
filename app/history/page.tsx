@@ -1,6 +1,8 @@
 import { ArrowDown, ArrowUp, CalendarDays, CheckCircle2, CircleAlert, Clock3, Download, Filter, RefreshCw } from "lucide-react";
 import { Button, Delta, PageHeader, SectionHeading, StatusBadge } from "@/components/ui";
-import { demoJobs, demoRuns } from "@/lib/demo-data";
+import { getDashboardData } from "@/lib/dashboard-data";
+
+export const dynamic = "force-dynamic";
 
 const runPoints = [15, 10, 0, 3, 0];
 const coveragePoints = [67, 100, 0, 100, 0];
@@ -14,10 +16,11 @@ function Chart() {
   return <svg viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none" aria-label="Evidence rows and field coverage"><defs><linearGradient id="history-fill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#685cf6" stopOpacity=".16" /><stop offset="1" stopColor="#685cf6" stopOpacity="0" /></linearGradient></defs><polygon points={`0,${height} ${rows} ${width},${height}`} fill="url(#history-fill)" /><polyline points={rows} fill="none" stroke="#685cf6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /><polyline points={coverage} fill="none" stroke="#2fbe99" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="4 4" /><circle cx={width} cy={rows.split(" ").at(-1)?.split(",")[1]} r="3.5" fill="#685cf6" /><circle cx={width} cy={coverage.split(" ").at(-1)?.split(",")[1]} r="3" fill="#2fbe99" /></svg>;
 }
 
-export default function HistoryPage() {
+export default async function HistoryPage() {
+  const { jobs: demoJobs, runs: demoRuns, model } = await getDashboardData();
   return (
     <>
-      <PageHeader eyebrow="Evidence & lifecycle" title="Run history" description="Trace the completed RevRag run and same-ID recovery alongside separate CareerSentry-owned healing-lab evidence. This page shows saved evidence, not a live feed or schedule.">
+      <PageHeader eyebrow="Evidence & lifecycle" title="Run history" description={`Trace RevRag collection evidence alongside the separate CareerSentry-owned healing lab. Storage mode: ${model.source.label}.`}>
         <Button variant="secondary" icon={CalendarDays}>Evidence window</Button>
         <Button variant="secondary" icon={Download}>Evidence JSON</Button>
         <Button href="/collectors" icon={RefreshCw}>Review health</Button>

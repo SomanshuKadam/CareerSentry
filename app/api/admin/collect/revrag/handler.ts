@@ -7,10 +7,13 @@ import {
   type CollectorRunner,
   type RevRagCollectionResult,
 } from "../../../../../src/lib/brightdata";
+import type { PersistenceRepository } from "../../../../../src/lib/persistence/contracts";
 
 export type RevRagRouteDependencies = {
   environment?: Record<string, string | undefined>;
   createClient?: (apiToken: string) => CollectorRunner;
+  persistence?: PersistenceRepository | null;
+  now?: () => string;
 };
 
 function sameSecret(expected: string, provided: string): boolean {
@@ -36,7 +39,7 @@ export function jsonResponse(body: unknown, status: number, extraHeaders: Header
   });
 }
 
-function publicResult(result: RevRagCollectionResult): Record<string, unknown> {
+function publicResult(result: RevRagCollectionResult, persisted: boolean): Record<string, unknown> {
   return {
     snapshotId: result.snapshotId,
     collectorId: result.collectorId,
@@ -45,6 +48,7 @@ function publicResult(result: RevRagCollectionResult): Record<string, unknown> {
     counts: result.counts,
     health: result.health,
     records: result.records,
+    persisted,
   };
 }
 
@@ -65,6 +69,11 @@ export function createRevRagRouteHandler(
       return jsonResponse({ error: "Collection service is not configured" }, 503);
     }
 
+    const persistence = dependencies.persistence;
+    if (!persistence) {
+      return jsonResponse({ error: "Durable storage is not configured" }, 503);
+    }
+
     let client: CollectorRunner;
     try {
       client = dependencies.createClient
@@ -77,10 +86,52 @@ export function createRevRagRouteHandler(
     try {
       // The body is intentionally ignored: callers cannot replace the fixed
       // collector ID or redirect collection to another URL.
-      return jsonResponse(publicResult(await runRevRagCollection(client)), 200);
+      const startedAt = (dependencies.now ?? (() => new Date().toISOString()))();
+      const result = await runRevRagCollection(client, { now: () => startedAt });
+      const completedAt = (dependencies.now ?? (() => new Date().toISOString()))();
+      await persistence.commitHealthySnapshot({
+        collectorId: result.collectorId,
+        companyId: "revrag-ai",
+        sourceCatalogUrl: "https://www.revrag.ai/careers",
+        snapshotId: result.snapshotId,
+        rowCount: result.counts.rowCount,
+        validRowCount: result.counts.validRowCount,
+        errorRowCount: result.counts.errorRowCount,
+        records: result.records,
+        health: result.health,
+        startedAt,
+        completedAt,
+      });
+      return jsonResponse(publicResult(result, true), 200);
     } catch (error) {
       if (error instanceof RevRagSnapshotNotHealthyError) {
-        return jsonResponse(publicResult(error.result), 502);
+        try {
+          const completedAt = (dependencies.now ?? (() => new Date().toISOString()))();
+          await persistence.recordUnhealthyRun({
+            collectorId: error.result.collectorId,
+            companyId: "revrag-ai",
+            sourceCatalogUrl: "https://www.revrag.ai/careers",
+            snapshotId: error.result.snapshotId,
+            status: error.result.status,
+            rowCount: error.result.counts.rowCount,
+            validRowCount: error.result.counts.validRowCount,
+            errorRowCount: error.result.counts.errorRowCount,
+            health: error.result.health,
+            completedAt,
+            incident: {
+              status: error.result.status === "rejected" ? "rejected" : "degraded",
+              reasons: error.result.health.reasons,
+              evidence: {
+                rowCount: error.result.counts.rowCount,
+                validRowCount: error.result.counts.validRowCount,
+                errorRowCount: error.result.counts.errorRowCount,
+              },
+            },
+          });
+          return jsonResponse(publicResult(error.result, true), 502);
+        } catch {
+          return jsonResponse({ error: "Collector result could not be stored" }, 503);
+        }
       }
       return jsonResponse({ error: "Collector service unavailable" }, 503);
     }

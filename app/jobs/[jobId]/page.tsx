@@ -2,16 +2,15 @@ import Link from "next/link";
 import { ArrowLeft, ExternalLink, GitBranch, MapPin, ShieldCheck, Sparkles } from "lucide-react";
 import { notFound } from "next/navigation";
 import { Button, CompanyMark, PageHeader, ProvenanceTrail, SectionHeading, StatusBadge } from "@/components/ui";
-import { demoCompanies, demoJobs } from "@/lib/demo-data";
+import { getDashboardData } from "@/lib/dashboard-data";
 
-export function generateStaticParams() {
-  return demoJobs.map((job) => ({ jobId: job.jobId }));
-}
+export const dynamic = "force-dynamic";
 
-export default function JobDetailPage({ params }: { params: { jobId: string } }) {
-  const job = demoJobs.find((candidate) => candidate.jobId === params.jobId);
+export default async function JobDetailPage({ params }: { params: { jobId: string } }) {
+  const { jobs, companies } = await getDashboardData();
+  const job = jobs.find((candidate) => candidate.jobId === params.jobId);
   if (!job) notFound();
-  const company = demoCompanies.find((candidate) => candidate.id === job.companyId);
+  const company = companies.find((candidate) => candidate.id === job.companyId);
   if (!company) notFound();
 
   return (

@@ -8,6 +8,7 @@ import {
   type CollectorRunner,
 } from "../src/lib/brightdata";
 import { createRevRagRouteHandler } from "../app/api/admin/collect/revrag/handler";
+import type { PersistenceRepository } from "../src/lib/persistence/contracts";
 import {
   revragErrorRows,
   revragHealedRows,
@@ -27,6 +28,16 @@ function fakeClient(rows: Record<string, unknown>[]): {
     .fn<CollectorRunner["runCollector"]>()
     .mockResolvedValue({ snapshotId: "j_revrag_snapshot", rows });
   return { client: { runCollector }, runCollector };
+}
+
+function fakePersistence() {
+  const commitHealthySnapshot = vi.fn().mockResolvedValue({ canonicalJobCount: 10 });
+  const recordUnhealthyRun = vi.fn().mockResolvedValue({ canonicalJobCount: 0 });
+  const repository = {
+    commitHealthySnapshot,
+    recordUnhealthyRun,
+  } as unknown as PersistenceRepository;
+  return { repository, commitHealthySnapshot, recordUnhealthyRun };
 }
 
 async function jsonBody(response: Response): Promise<Record<string, unknown>> {
@@ -109,7 +120,8 @@ describe("protected RevRag route", () => {
 
   it("requires the server run key before constructing a collector client", async () => {
     const createClient = vi.fn<(apiToken: string) => CollectorRunner>();
-    const handler = createRevRagRouteHandler({ environment, createClient });
+    const { repository } = fakePersistence();
+    const handler = createRevRagRouteHandler({ environment, createClient, persistence: repository });
     const request = new Request("http://localhost/api/admin/collect/revrag", {
       method: "POST",
       headers: { "x-careersentry-run-key": "wrong-key" },
@@ -129,6 +141,7 @@ describe("protected RevRag route", () => {
     const handler = createRevRagRouteHandler({
       environment: { CAREERSENTRY_RUN_KEY: environment.CAREERSENTRY_RUN_KEY },
       createClient,
+      persistence: fakePersistence().repository,
     });
 
     const response = await handler(postRequest({ collectorId: "c_attacker", url: "https://attacker.test" }));
@@ -141,9 +154,12 @@ describe("protected RevRag route", () => {
 
   it("ignores caller target fields and returns a no-store sanitized success", async () => {
     const { client, runCollector } = fakeClient(revragHealedRows);
+    const { repository, commitHealthySnapshot } = fakePersistence();
     const handler = createRevRagRouteHandler({
       environment,
       createClient: () => client,
+      persistence: repository,
+      now: () => "2026-08-22T10:00:00.000Z",
     });
 
     const response = await handler(
@@ -163,8 +179,14 @@ describe("protected RevRag route", () => {
       snapshotId: "j_revrag_snapshot",
       collectorId: REVRAG_COLLECTOR_ID,
       status: "healthy",
+      persisted: true,
       counts: { rowCount: 10, validRowCount: 10, errorRowCount: 0 },
     });
+    expect(commitHealthySnapshot).toHaveBeenCalledWith(expect.objectContaining({
+      snapshotId: "j_revrag_snapshot",
+      collectorId: REVRAG_COLLECTOR_ID,
+      records: expect.any(Array),
+    }));
     expect(body.records).toHaveLength(10);
     expect(JSON.stringify(body)).not.toContain("forms.google.com");
     expect(JSON.stringify(body)).not.toContain("server-only-token");
@@ -173,9 +195,11 @@ describe("protected RevRag route", () => {
 
   it("returns a safe failed response without returning degraded rows", async () => {
     const { client } = fakeClient([...revragValidRows, ...revragErrorRows]);
+    const { repository, recordUnhealthyRun } = fakePersistence();
     const handler = createRevRagRouteHandler({
       environment,
       createClient: () => client,
+      persistence: repository,
     });
 
     const response = await handler(postRequest());
@@ -188,9 +212,15 @@ describe("protected RevRag route", () => {
       collectorId: REVRAG_COLLECTOR_ID,
       status: "degraded",
       healthy: false,
+      persisted: true,
       counts: { rowCount: 15, validRowCount: 10, errorRowCount: 5 },
       records: [],
     });
+    expect(recordUnhealthyRun).toHaveBeenCalledWith(expect.objectContaining({
+      snapshotId: "j_revrag_snapshot",
+      status: "degraded",
+      incident: expect.objectContaining({ status: "degraded" }),
+    }));
     expect(JSON.stringify(body)).not.toContain("forms.google.com");
   });
 
@@ -202,7 +232,10 @@ describe("protected RevRag route", () => {
       )
       .mockResolvedValueOnce(new Response(JSON.stringify(revragHealedRows), { status: 200 }));
     vi.stubGlobal("fetch", fetchImpl);
-    const handler = createRevRagRouteHandler({ environment });
+    const handler = createRevRagRouteHandler({
+      environment,
+      persistence: fakePersistence().repository,
+    });
 
     const response = await handler(postRequest({ collectorId: "c_attacker" }));
     const body = await jsonBody(response);
@@ -215,5 +248,20 @@ describe("protected RevRag route", () => {
     expect(JSON.parse(String(triggerInit?.body))).toEqual([
       { url: REVRAG_SOURCE_CATALOG_URL },
     ]);
+  });
+
+  it("fails closed before a live trigger when durable storage is unavailable", async () => {
+    const { client, runCollector } = fakeClient(revragHealedRows);
+    const handler = createRevRagRouteHandler({
+      environment,
+      createClient: () => client,
+      persistence: null,
+    });
+
+    const response = await handler(postRequest());
+
+    expect(response.status).toBe(503);
+    expect(await jsonBody(response)).toEqual({ error: "Durable storage is not configured" });
+    expect(runCollector).not.toHaveBeenCalled();
   });
 });

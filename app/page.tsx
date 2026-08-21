@@ -12,20 +12,24 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { Button, CompanyMark, MetricCard, PageHeader, Sparkline } from "@/components/ui";
-import { coverageSparkline, demoCollectors, demoJobs, demoProfile, overviewSparkline } from "@/lib/demo-data";
+import { coverageSparkline, demoProfile, overviewSparkline } from "@/lib/demo-data";
+import { getDashboardData } from "@/lib/dashboard-data";
 
-export default function OverviewPage() {
-  const previewJobs = demoJobs.slice(0, 4);
-  const healthyCollectors = demoCollectors.filter((collector) => collector.status === "healthy").length;
-  const verifiedCoverage = demoJobs.length > 0 ? 100 : 0;
-  const healingLab = demoCollectors.find((collector) => collector.company === "CareerSentry Healing Lab");
+export const dynamic = "force-dynamic";
+
+export default async function OverviewPage() {
+  const { jobs, collectors, sourceLabel, sourceNote } = await getDashboardData();
+  const previewJobs = jobs.slice(0, 4);
+  const healthyCollectors = collectors.filter((collector) => collector.status === "healthy").length;
+  const verifiedCoverage = jobs.length > 0 ? 100 : 0;
+  const healingLab = collectors.find((collector) => collector.company === "CareerSentry Healing Lab");
 
   return (
     <>
       <PageHeader
         eyebrow="Saved RevRag recovery"
         title="Good morning, here is your signal."
-        description="RevRag's saved history records an initial 15-entry run with 10 valid roles and 5 rejected envelopes, followed by an approval-gated same-ID cleanup that verified 10 clean roles. The separate healing lab remains unresolved on layout B."
+        description={`RevRag currently shows ${jobs.length} verified roles from ${sourceLabel}. ${sourceNote} The separate healing lab remains unresolved on layout B.`}
       >
         <Button href="/jobs" variant="secondary" icon={FileSearch}>Browse verified roles</Button>
         <Button href="/collectors" icon={Play}>Review evidence health</Button>
@@ -33,7 +37,7 @@ export default function OverviewPage() {
 
       <div className="dashboard-grid">
         <section className="metrics-grid" aria-label="Overview metrics">
-          <MetricCard label="Verified roles" value={String(demoJobs.length)} detail="Saved same-ID recovery" trend="Accepting applications" icon={Sparkles}>
+          <MetricCard label="Verified roles" value={String(jobs.length)} detail={sourceLabel} trend="Accepting applications" icon={Sparkles}>
             <div className="metric-sparkline"><Sparkline points={overviewSparkline} color="#685cf6" fill /></div>
           </MetricCard>
           <MetricCard label="Changed roles" value="0" detail="No comparison run saved" trend="Not evaluated" trendTone="neutral" icon={TrendingUp} />
@@ -87,12 +91,12 @@ export default function OverviewPage() {
             <div className="health-summary">
               <div className="health-score-row"><div><span className="health-score-label">Verified source coverage</span><div className="health-score">{verifiedCoverage}<small>/100</small></div></div><div className="health-ring"><span>{verifiedCoverage}%</span></div></div>
               <div className="health-list">
-                {demoCollectors.map((collector) => {
+                {collectors.map((collector) => {
                   const warning = collector.status !== "healthy";
                   return <div className="health-row" key={collector.id}><div className="health-row-label"><strong>{collector.company} / {collector.kind}</strong><small>{collector.rowCount} rows / {collector.lastRun}</small></div><div className="health-mini-track"><span className={warning ? "warning" : ""} style={{ width: `${collector.fieldCoverage}%` }} /></div><span className="health-row-value">{collector.fieldCoverage}%</span></div>;
                 })}
               </div>
-              <div className="health-footer"><CheckCircle2 size={14} /> {healingLab ? "Healing-lab evidence remains in review; dashboard reads saved evidence and makes no live requests." : "Dashboard reads saved evidence and makes no live requests."}</div>
+              <div className="health-footer"><CheckCircle2 size={14} /> {healingLab ? `Healing-lab evidence remains in review; dashboard source: ${sourceLabel}.` : `Dashboard source: ${sourceLabel}.`}</div>
             </div>
           </section>
 
@@ -108,7 +112,7 @@ export default function OverviewPage() {
           </section>
         </div>
 
-        <div className="footer-note"><Clock3 size={12} style={{ verticalAlign: "-2px", marginRight: 4 }} />Showing saved RevRag recovery evidence plus owned healing-lab evidence · <strong>Dashboard reads saved evidence; no live Bright Data requests are made.</strong></div>
+        <div className="footer-note"><Clock3 size={12} style={{ verticalAlign: "-2px", marginRight: 4 }} />Showing {sourceLabel} plus owned healing-lab evidence · <strong>Page loads never trigger Bright Data collection.</strong></div>
       </div>
     </>
   );

@@ -5,9 +5,9 @@ import { JobsView } from "@/components/jobs-view";
 export default function JobsPage() {
   return (
     <>
-      <PageHeader eyebrow="Verified role catalog" title="Jobs" description="Fresh, changed, and active roles matched against your demo profile. Every row keeps its official source and collector trail.">
+      <PageHeader eyebrow="Verified role catalog" title="Jobs" description="Ten active RevRag AI roles from the saved same-ID recovery run. Every row keeps its same-origin source and collector trail; application routes are excluded.">
         <Button variant="secondary" icon={SlidersHorizontal}>Tune matching</Button>
-        <Button icon={RefreshCw}>Refresh snapshot</Button>
+        <Button icon={RefreshCw}>Review snapshot</Button>
       </PageHeader>
       <JobsView />
     </>

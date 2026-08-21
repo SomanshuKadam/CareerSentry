@@ -1,23 +1,21 @@
 # CareerSentry
 
-CareerSentry is a provenance-aware, self-healing career intelligence agent for the [Into the Scrape-Verse](https://www.wemakedevs.org/hackathons/scrape-verse) hackathon. It monitors official career catalogs, validates collection health, and is designed to repair a Bright Data Scraper Studio collector in place while preserving its Collector ID and downstream contract.
+CareerSentry is a provenance-aware, self-healing career intelligence agent for the [Into the Scrape-Verse](https://www.wemakedevs.org/hackathons/scrape-verse) hackathon. It keeps official career paths, normalized job records, collector health, and bounded healing evidence visible in one workspace.
 
-> Current state: the product shell and owned layout A/B catalog are deployed at [career-sentry.vercel.app](https://career-sentry.vercel.app). A custom Scraper Studio collector has completed a three-row fixture run; its first saved schema repair failed post-approval verification and remains an intentionally visible reliability incident. Real-company collection stays disabled until a target passes the provenance, policy, Marketplace, and budget gates.
+> Current state: collector `c_mt3ctgtj2rqnwsqm8p` was run against the public RevRag AI careers catalog. Its initial saved run returned 15 entries (10 valid active roles and 5 rejected error envelopes); an approval-gated cleanup was saved on the same Collector ID and verification returned 10 clean rows. The dashboard reads sanitized saved evidence and makes no live Bright Data requests or claims a persistent feed or schedule. The separate CareerSentry-owned layout A/B catalog remains the deterministic healing lab, with layout B unresolved.
 
 ## What is implemented
 
-- Responsive Next.js dashboard with Overview, Jobs, Companies, Collector Health, Incidents, and Run History screens.
-- Sanitized deterministic demo data; no resumes or personal candidate data.
-- Strict Zod `JobRecord` contract.
-- Bangalore/Bengaluru normalization with original source-label preservation.
-- Job-ID/URL deduplication and new/updated/closed lifecycle diffing.
+- Responsive Next.js dashboard with Overview, Jobs, Companies, Collector Health, Incidents, and Evidence History screens.
+- Ten verified RevRag AI roles with stable `jobId` values derived only from each unique same-origin `/careers/{slug}` URL.
+- Sanitized public evidence under [`docs/evidence/revrag-verified.json`](./docs/evidence/revrag-verified.json); no application URLs, resumes, candidate fields, credentials, or personal data.
+- A clear source registry separating saved RevRag run/recovery evidence from the CareerSentry-owned healing lab.
+- Strict Zod `JobRecord` contract, location normalization, URL/job-ID deduplication, and lifecycle helpers.
 - Collector health checks for count drift, required fields, duplicates, pagination, schema, details, and application actions.
-- Server-side Bright Data client for `POST /dca/trigger` and `GET /dca/dataset` polling.
-- A hard ten-input API guard plus a project-wide 5,000-credit/no-overage policy.
-- Project-owned public layout A/B catalog with three fictional job-detail pages.
-- Custom Scraper Studio Discovery collector `c_mt1wzptjco00s7w0p`, created and run through Codex against one fixture URL.
-- Approval-gated same-collector healing with post-approval verification that correctly rejected a repair whose preview and saved output differed.
-- Read-only real-company target research under `docs/`; no real company collection has been performed.
+- Server-side Bright Data client code with bounded input validation; the dashboard reads saved evidence and does not call the live service.
+- Project-owned public layout A/B catalog with three fixture roles for deterministic healing tests.
+- Approval-gated same-collector healing evidence. The layout B repair remains visibly rejected after saved-template verification failed.
+- Read-only target research under `docs/`; researched targets are not represented as collected jobs in the UI.
 
 ## Local setup
 
@@ -57,28 +55,43 @@ official catalog -> Discovery collector -> normalized snapshot
                                       -> PDP only for new/changed job URLs
 ```
 
-The application client enforces at most ten inputs in one run. The target spike is stricter: exactly one public catalog URL until actual account usage can be measured.
+The application client enforces at most ten inputs in one run. The current UI state is a saved run/recovery view; it does not execute a live request or claim a persistent schedule.
 
-## Scraper Studio evidence
+### Protected RevRag collection route
 
-- [Recovered layout-A output](./docs/evidence/layout-a-recovered.json): three fictional roles collected by the custom scraper.
-- [Degraded layout-B output](./docs/evidence/layout-b-degraded.json): zero rows after the controlled DOM redesign.
-- [Healing incident timeline](./docs/evidence/healing-incident.md): approval decisions, failed verification, same-Collector-ID recovery, and the unresolved layout-B repair.
+`POST /api/admin/collect/revrag` is disabled by default. It runs only when both the server-only `CAREERSENTRY_RUN_KEY` and `BRIGHT_DATA_API_TOKEN` are configured. The route uses a timing-safe run-key comparison, ignores request-body target fields, and always fixes the one input to `https://www.revrag.ai/careers` and the collector to `c_mt3ctgtj2rqnwsqm8p`.
 
-The evidence is intentionally honest: CareerSentry successfully recovered the layout-A schema on the same Collector ID, detected the layout-B zero-row failure, and did not claim recovery when Scraper Studio failed the layout-B repair during approval.
+Use a placeholder key in local documentation; never put a real key or token in source control:
+
+```bash
+curl -X POST http://localhost:3000/api/admin/collect/revrag \
+  -H "x-careersentry-run-key: replace_with_a_long_server_only_run_key" \
+  -H "Content-Type: application/json" \
+  --data '{}'
+```
+
+Responses are `Cache-Control: no-store`; unauthenticated or unavailable configuration fails safely, and a non-healthy snapshot returns no partial records. The route does not write durable storage—persistence remains pending.
+
+## Evidence
+
+- [Saved RevRag run/recovery evidence](./docs/evidence/revrag-verified.json): an initial degraded 15-entry run (10 valid + 5 rejected envelopes) and a same-Collector-ID verified 10-row recovery, reduced to same-origin role fields.
+- [Recovered layout-A output](./docs/evidence/layout-a-recovered.json): three CareerSentry-owned fixture roles.
+- [Degraded layout-B output](./docs/evidence/layout-b-degraded.json): zero rows after the controlled fixture redesign.
+- [Healing incident timeline](./docs/evidence/healing-incident.md): approval decisions, failed verification, same-Collector-ID recovery evidence, and the unresolved layout-B repair.
+
+The evidence is intentionally honest: the RevRag history records the completed initial run, approval-gated same-ID cleanup, and verified recovery, while the layout A/B run is explicitly project-owned healing evidence. Neither surface contains application interactions or personal data.
 
 ## Architecture
 
 ```text
-Official careers catalog
+official careers catalog
           |
           v
-Bright Data Scraper Studio Discovery collector
+Discovery collector evidence
           |
-          +---- new/changed URLs ----> incremental PDP collector
-          |                                |
-          +---------------+----------------+
-                          v
+          +---- new/changed URLs ----> incremental PDP collector (future)
+          |
+          v
                     Zod + normalizer
                           |
              +------------+-------------+
@@ -86,32 +99,33 @@ Bright Data Scraper Studio Discovery collector
         persistence                 health engine
              |                          |
              v                          v
-         dashboard              healing incident/Codex
+         dashboard              healing incident/evidence
 ```
 
-CLI commands create, run, and heal collectors during agent-assisted development. The web application uses the Scraper Studio API and never executes arbitrary shell commands.
+The project-owned `/demo-target` route supplies controlled layout A/B markup for the healing lab. It is not an external employer catalog.
 
 ## Target policy
 
-Public visibility is not treated as permission. Before any real collection, the target must pass:
+Public visibility is not treated as permission. Before any future real collection, the target must pass:
 
 - official corporate-to-careers provenance;
 - public/no-login access;
-- current Terms and robots/site-policy review;
+- current Terms, robots, and site-policy review;
 - Bright Data pre-built scraper overlap check;
-- one-input credit gate;
-- schema and provenance validation.
+- one-input credit and budget gate; and
+- schema, provenance, and personal-data exclusion checks.
 
-Nutanix is currently blocked pending express written permission. Canva is paused because its current Terms leave the separate careers-host scope ambiguous. See the target research under `docs/` for evidence.
+The current RevRag records reflect a completed run and approval-gated same-ID cleanup from this workspace. The initial degraded result and recovered 10-row verification are retained as saved evidence; they must not be interpreted as permission to rerun collection. The dashboard currently reads those saved records and does not claim a persistent live feed or schedule. Other target research remains policy evidence only and is intentionally absent from the jobs, companies, collectors, runs, and incidents shown by the app.
 
 ## AI usage disclosure
 
-Codex and user-authorized Luna subagents are used for research, implementation, review, and tests. Bright Data Scraper Studio's AI Agent created the qualifying custom fixture collector and proposed its same-ID schema repairs. The project owner retains the approval gate; CareerSentry validates both previews and saved production reruns before declaring recovery. The owner remains responsible for the architecture, generated code, and submission.
+Codex and user-authorized subagents are used for research, implementation, review, and tests. Bright Data Scraper Studio was used for the RevRag collector run and approval-gated same-ID cleanup; the sanitized saved verification is retained alongside the project-owned healing lab. The project owner retains the approval gate; CareerSentry validates previews and saved reruns before declaring recovery. The owner remains responsible for the architecture, generated code, and submission.
 
 ## Safety
 
-- Public job-posting data only.
+- Public job-posting fields only.
 - No logins, candidate portals, form submissions, application automation, or personal data.
-- Delegated ATS links are recorded only when reached through the official company path; application forms are not opened or crawled.
+- Application links and form fields are excluded from the sanitized evidence.
 - Scraped content is untrusted and must be validated before rendering or reaching an LLM.
 - Tokens, `.env` files, resumes, and private job-search results are excluded from the repository.
+- No live Bright Data request is made by the current dashboard state.

@@ -77,7 +77,10 @@ export type BrightDataIngestionErrorCode =
   | "legacy_job_id_field"
   | "missing_requisition"
   | "conflicting_requisition"
+  | "error_envelope"
+  | "missing_company_job_url"
   | "origin_not_allowed"
+  | "path_not_allowed"
   | "https_required";
 
 export class BrightDataIngestionError extends Error {

@@ -36,7 +36,7 @@ export function SectionHeading({ title, description, href, action }: { title: st
 
 export function StatusBadge({ status, icon = true }: { status: string; icon?: boolean }) {
   const normalized = status.toLowerCase().replace(/\s+/g, "_");
-  const tone = normalized.includes("healthy") || normalized.includes("recovered") || normalized === "pass" || normalized === "active" ? "success" : normalized.includes("degraded") || normalized.includes("warning") || normalized.includes("preview") || normalized.includes("recover") || normalized === "new" || normalized === "changed" ? "warning" : normalized.includes("closed") || normalized.includes("fail") || normalized.includes("high") ? "danger" : normalized.includes("review") ? "neutral" : "info";
+  const tone = normalized.includes("healthy") || normalized.includes("recovered") || normalized === "pass" || normalized === "active" ? "success" : normalized.includes("degraded") || normalized.includes("warning") || normalized.includes("preview") || normalized.includes("recover") || normalized === "new" || normalized === "changed" ? "warning" : normalized.includes("closed") || normalized.includes("fail") || normalized.includes("high") || normalized.includes("reject") ? "danger" : normalized.includes("review") ? "neutral" : "info";
   const Icon = tone === "success" ? CircleCheck : tone === "danger" ? CircleX : tone === "warning" ? CircleAlert : Info;
   return <span className={`status-badge status-${tone}`}>{icon ? <Icon size={13} strokeWidth={2.3} /> : null}{status}</span>;
 }
@@ -97,7 +97,8 @@ export function CompanyMark({ mark, tone = "violet", size = "md" }: { mark: stri
 export function Delta({ value }: { value: string }) {
   const positive = value.startsWith("+");
   const negative = value.startsWith("−") || value.startsWith("-");
-  return <span className={`delta${positive ? " delta-positive" : negative ? " delta-negative" : ""}`}>{positive ? "↑" : negative ? "↓" : <Minus size={11} />}{value.replace(/^([+−-])/, "")}</span>;
+  const noBaseline = value === "—";
+  return <span className={`delta${positive ? " delta-positive" : negative ? " delta-negative" : ""}`}>{positive ? "↑" : negative ? "↓" : <Minus size={11} />}{noBaseline ? "No baseline" : value.replace(/^([+−-])/, "")}</span>;
 }
 
 export function ProvenanceTrail({ steps }: { steps: string[] }) {

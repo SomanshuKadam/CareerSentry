@@ -4,7 +4,7 @@ Date: 2026-08-21
 Collector: `c_mt1wzptjco00s7w0p`
 Owned target: `https://career-sentry.vercel.app/demo-target`
 
-This evidence contains only fictional, project-owned job data. It contains no API token, account data, candidate data, application form, or real-company collection.
+This evidence contains only CareerSentry-owned fixture job data. It contains no API token, account data, candidate data, application form, or real-company collection.
 
 ## Timeline
 

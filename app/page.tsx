@@ -11,32 +11,34 @@ import {
   Sparkles,
   TrendingUp,
 } from "lucide-react";
-import { Button, CompanyMark, MetricCard, PageHeader, SectionHeading, Sparkline, StatusBadge } from "@/components/ui";
+import { Button, CompanyMark, MetricCard, PageHeader, Sparkline } from "@/components/ui";
 import { coverageSparkline, demoCollectors, demoJobs, demoProfile, overviewSparkline } from "@/lib/demo-data";
 
 export default function OverviewPage() {
-  const previewJobs = demoJobs.filter((job) => job.state !== "closed").slice(0, 4);
+  const previewJobs = demoJobs.slice(0, 4);
   const healthyCollectors = demoCollectors.filter((collector) => collector.status === "healthy").length;
+  const verifiedCoverage = demoJobs.length > 0 ? 100 : 0;
+  const healingLab = demoCollectors.find((collector) => collector.company === "CareerSentry Healing Lab");
 
   return (
     <>
       <PageHeader
-        eyebrow="Wednesday · 20 August 2026"
-        title="Good morning, here’s your signal."
-        description="A clear view of the roles that moved, the collectors you can trust, and anything that needs your attention."
+        eyebrow="Saved RevRag recovery"
+        title="Good morning, here is your signal."
+        description="RevRag's saved history records an initial 15-entry run with 10 valid roles and 5 rejected envelopes, followed by an approval-gated same-ID cleanup that verified 10 clean roles. The separate healing lab remains unresolved on layout B."
       >
-        <Button href="/jobs" variant="secondary" icon={FileSearch}>Browse matches</Button>
-        <Button href="/collectors" icon={Play}>Run health check</Button>
+        <Button href="/jobs" variant="secondary" icon={FileSearch}>Browse verified roles</Button>
+        <Button href="/collectors" icon={Play}>Review evidence health</Button>
       </PageHeader>
 
       <div className="dashboard-grid">
         <section className="metrics-grid" aria-label="Overview metrics">
-          <MetricCard label="New matches" value="18" detail="Since your last review" trend="+6 today" icon={Sparkles}>
+          <MetricCard label="Verified roles" value={String(demoJobs.length)} detail="Saved same-ID recovery" trend="Accepting applications" icon={Sparkles}>
             <div className="metric-sparkline"><Sparkline points={overviewSparkline} color="#685cf6" fill /></div>
           </MetricCard>
-          <MetricCard label="Changed roles" value="7" detail="Salary, scope, or location changed" trend="+2 today" trendTone="neutral" icon={TrendingUp} />
-          <MetricCard label="Closed roles" value="3" detail="Removed from the latest snapshots" trend="−1 today" trendTone="negative" icon={CircleAlert} />
-          <MetricCard label="Collector health" value="96%" detail={`${healthyCollectors} of ${demoCollectors.length} collectors healthy`} trend="+4.2%" icon={ShieldCheck}>
+          <MetricCard label="Changed roles" value="0" detail="No comparison run saved" trend="Not evaluated" trendTone="neutral" icon={TrendingUp} />
+          <MetricCard label="Closed roles" value="0" detail="No closure evidence in saved runs" trend="Not evaluated" trendTone="neutral" icon={CircleAlert} />
+          <MetricCard label="Source coverage" value={`${verifiedCoverage}%`} detail={`${healthyCollectors} verified source collector; healing lab is separate`} trend="Recovery verified" icon={ShieldCheck}>
             <div className="metric-sparkline"><Sparkline points={coverageSparkline} color="#2fbe99" fill /></div>
           </MetricCard>
         </section>
@@ -44,7 +46,7 @@ export default function OverviewPage() {
         <div className="overview-columns">
           <section className="panel jobs-preview">
             <div className="panel-header">
-              <div><h2>Fresh matches</h2><p>Rules-based matches from the latest verified snapshots.</p></div>
+              <div><h2>Verified roles</h2><p>Public RevRag records retained from the saved recovery without application URLs or personal data.</p></div>
               <Link href="/jobs" className="text-link">View all <ArrowUpRight size={14} /></Link>
             </div>
             <div className="panel-body">
@@ -52,11 +54,11 @@ export default function OverviewPage() {
                 <Link href={`/jobs/${job.jobId}`} className="job-row" key={job.jobId}>
                   <div className="job-main">
                     <CompanyMark mark={job.companyMark} tone={job.companyTone} size="sm" />
-                    <span className="job-title-wrap"><span className="job-title">{job.title}</span><span className="job-company">{job.company} · {job.department.split(" · ")[1]}</span></span>
+                    <span className="job-title-wrap"><span className="job-title">{job.title}</span><span className="job-company">{job.company} / {job.department}</span></span>
                   </div>
-                  <div className="job-location">{job.location}<span>{job.workplaceType} · {job.employmentType}</span></div>
-                  <div className="job-date">{job.publishedAt}<span className="job-company">Published</span></div>
-                  <div className="job-score"><span className="score-pill">{job.matchScore}%</span><span className="score-label">match</span></div>
+                  <div className="job-location">{job.location}<span>{job.workplaceType} / {job.employmentType}</span></div>
+                  <div className="job-date">{job.publishedAt}<span className="job-company">Source date</span></div>
+                  <div className="job-score"><span className="score-pill">{job.matchScore}%</span><span className="score-label">example match</span></div>
                 </Link>
               ))}
             </div>
@@ -64,7 +66,7 @@ export default function OverviewPage() {
 
           <section className="panel match-panel">
             <div className="panel-header">
-              <div><h2>Matching profile</h2><p>Explainable rules, fictional demo profile.</p></div>
+              <div><h2>Example matching profile</h2><p>Scores are derived in-app from this sanitized preference profile.</p></div>
               <Sparkles size={16} color="#a7a0ff" />
             </div>
             <div className="match-profile">
@@ -72,41 +74,41 @@ export default function OverviewPage() {
               <div><strong>{demoProfile.role}</strong><span>{demoProfile.level}</span></div>
             </div>
             <div className="profile-tags">{demoProfile.locations.map((location) => <span className="profile-tag" key={location}>{location}</span>)}{demoProfile.skills.slice(0, 4).map((skill) => <span className="profile-tag" key={skill}>{skill}</span>)}</div>
-            <div className="match-footer"><span>Last tuned 2 days ago</span><Link href="/settings" className="text-link">Edit profile <ArrowUpRight size={13} /></Link></div>
+            <div className="match-footer"><span>Example rules only</span><Link href="/settings" className="text-link">Edit profile <ArrowUpRight size={13} /></Link></div>
           </section>
         </div>
 
         <div className="overview-columns">
           <section className="panel">
             <div className="panel-header">
-              <div><h2>Collector health</h2><p>Latest signal from every connected career source.</p></div>
+              <div><h2>Evidence health</h2><p>Saved source runs and the separate owned healing lab.</p></div>
               <Link href="/collectors" className="text-link">Open health <ArrowUpRight size={14} /></Link>
             </div>
             <div className="health-summary">
-              <div className="health-score-row"><div><span className="health-score-label">Overall reliability</span><div className="health-score">96<small>/100</small></div></div><div className="health-ring"><span>96%</span></div></div>
+              <div className="health-score-row"><div><span className="health-score-label">Verified source coverage</span><div className="health-score">{verifiedCoverage}<small>/100</small></div></div><div className="health-ring"><span>{verifiedCoverage}%</span></div></div>
               <div className="health-list">
-                {demoCollectors.slice(0, 3).map((collector) => {
+                {demoCollectors.map((collector) => {
                   const warning = collector.status !== "healthy";
-                  return <div className="health-row" key={collector.id}><div className="health-row-label"><strong>{collector.company} · {collector.kind}</strong><small>{collector.rowCount} rows · {collector.lastRun}</small></div><div className="health-mini-track"><span className={warning ? "warning" : ""} style={{ width: `${collector.fieldCoverage}%` }} /></div><span className="health-row-value">{collector.fieldCoverage}%</span></div>;
+                  return <div className="health-row" key={collector.id}><div className="health-row-label"><strong>{collector.company} / {collector.kind}</strong><small>{collector.rowCount} rows / {collector.lastRun}</small></div><div className="health-mini-track"><span className={warning ? "warning" : ""} style={{ width: `${collector.fieldCoverage}%` }} /></div><span className="health-row-value">{collector.fieldCoverage}%</span></div>;
                 })}
               </div>
-              <div className="health-footer"><CheckCircle2 size={14} /> Last baseline comparison completed 4 min ago</div>
+              <div className="health-footer"><CheckCircle2 size={14} /> {healingLab ? "Healing-lab evidence remains in review; dashboard reads saved evidence and makes no live requests." : "Dashboard reads saved evidence and makes no live requests."}</div>
             </div>
           </section>
 
           <section className="panel">
-            <div className="panel-header"><div><h2>Activity</h2><p>What changed while you were away.</p></div><Activity size={16} color="#8b98ad" /></div>
+            <div className="panel-header"><div><h2>Evidence activity</h2><p>What is represented in this workspace.</p></div><Activity size={16} color="#8b98ad" /></div>
             <div className="panel-body">
               <div className="activity-list">
-                <div className="activity-item"><span className="activity-icon activity-amber"><CircleAlert size={14} /></span><div className="activity-copy"><strong>Canva collector needs attention</strong><p>Preview is ready after a selector drift.</p></div><span className="activity-time">22m</span></div>
-                <div className="activity-item"><span className="activity-icon activity-green"><CheckCircle2 size={14} /></span><div className="activity-copy"><strong>Nutanix snapshot verified</strong><p>54 rows · all required fields present.</p></div><span className="activity-time">27m</span></div>
-                <div className="activity-item"><span className="activity-icon"><Sparkles size={14} /></span><div className="activity-copy"><strong>4 new roles matched</strong><p>Highest score: Platform Services · 94%.</p></div><span className="activity-time">29m</span></div>
+                <div className="activity-item"><span className="activity-icon activity-green"><CheckCircle2 size={14} /></span><div className="activity-copy"><strong>RevRag same-ID recovery verified</strong><p>10 clean rows / zero error envelopes / same Collector ID.</p></div><span className="activity-time">source</span></div>
+                <div className="activity-item"><span className="activity-icon activity-amber"><CircleAlert size={14} /></span><div className="activity-copy"><strong>Healing lab needs review</strong><p>Layout B returned zero rows; repair evidence was rejected.</p></div><span className="activity-time">lab</span></div>
+                <div className="activity-item"><span className="activity-icon"><Sparkles size={14} /></span><div className="activity-copy"><strong>Example matches calculated</strong><p>Scores are UI-derived and are not source fields.</p></div><span className="activity-time">UI</span></div>
               </div>
             </div>
           </section>
         </div>
 
-        <div className="footer-note"><Clock3 size={12} style={{ verticalAlign: "-2px", marginRight: 4 }} />Showing sanitized fixture data · <strong>No live Bright Data requests are made in this workspace.</strong></div>
+        <div className="footer-note"><Clock3 size={12} style={{ verticalAlign: "-2px", marginRight: 4 }} />Showing saved RevRag recovery evidence plus owned healing-lab evidence · <strong>Dashboard reads saved evidence; no live Bright Data requests are made.</strong></div>
       </div>
     </>
   );

@@ -43,8 +43,8 @@ export default function DemoTargetPage({ searchParams }: DemoTargetPageProps) {
           <p className="collector-lab__eyebrow">CareerSentry Collector Lab</p>
           <h1>Build reliable career data pipelines.</h1>
           <p>
-            This fictional public catalog is owned by the project and exists solely for
-            deterministic Bright Data Scraper Studio create, run, and heal demonstrations.
+            This project-owned public catalog exists solely for deterministic Bright Data
+            Scraper Studio create, run, and heal demonstrations.
           </p>
         </div>
         <aside aria-label="Fixture information">
@@ -92,7 +92,7 @@ export default function DemoTargetPage({ searchParams }: DemoTargetPageProps) {
       )}
 
       <footer className="collector-lab__footer">
-        <p>Public fictional data. No people, applications, credentials, or personal data.</p>
+        <p>CareerSentry-owned fixture data. No employer, people, applications, credentials, or personal data.</p>
         <nav aria-label="Fixture layout controls">
           <a aria-current={layout === "a" ? "page" : undefined} href="/demo-target?layout=a">Layout A</a>
           <a aria-current={layout === "b" ? "page" : undefined} href="/demo-target?layout=b">Layout B</a>

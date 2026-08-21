@@ -1,0 +1,125 @@
+{
+  "evidence_type": "saved_verified_public_career_recovery",
+  "snapshot_label": "Saved RevRag same-ID recovery evidence",
+  "collector_id": "c_mt3ctgtj2rqnwsqm8p",
+  "source_catalog_url": "https://www.revrag.ai/careers",
+  "record_count": 10,
+  "run_history": {
+    "initial": {
+      "status": "degraded",
+      "entries": 15,
+      "valid_active_rows": 10,
+      "rejected_error_envelopes": 5
+    },
+    "same_id_recovery": {
+      "status": "verified",
+      "entries": 10,
+      "error_envelopes": 0,
+      "approval_gated_cleanup_saved": true,
+      "collector_id_unchanged": true
+    }
+  },
+  "sanitization": "Listing fields only; application routes, personal data, and platform metadata removed.",
+  "roles": [
+    {
+      "jobId": "ai-product-analyst-intern",
+      "company_job_url": "https://www.revrag.ai/careers/ai-product-analyst-intern",
+      "title": "AI Product Analyst Intern",
+      "department": "Product & Design",
+      "location": "On-site, Bengaluru",
+      "employment_type": "Internship (6 months)",
+      "experience_text": "6 months, with a PPO based on performance",
+      "application_status": "Accepting Applications"
+    },
+    {
+      "jobId": "data-scientist-intern",
+      "company_job_url": "https://www.revrag.ai/careers/data-scientist-intern",
+      "title": "Data Scientist Intern",
+      "department": "AI & Data",
+      "location": "On-site, Bengaluru",
+      "employment_type": "Internship (6 months)",
+      "experience_text": "6 months, with a PPO based on performance",
+      "application_status": "Accepting Applications"
+    },
+    {
+      "jobId": "growth-associate",
+      "company_job_url": "https://www.revrag.ai/careers/growth-associate",
+      "title": "Growth Associate (Content & Community)",
+      "department": "GTM and Revenue",
+      "location": "On-site, Bengaluru",
+      "employment_type": "Full-time",
+      "experience_text": "2 to 3+ years",
+      "application_status": "Accepting Applications"
+    },
+    {
+      "jobId": "product-design-intern",
+      "company_job_url": "https://www.revrag.ai/careers/product-design-intern",
+      "title": "Product Design Intern",
+      "department": "Product & Design",
+      "location": "On-site, Bengaluru",
+      "employment_type": "Internship (6 months)",
+      "experience_text": "6 months, with a PPO based on performance",
+      "application_status": "Accepting Applications"
+    },
+    {
+      "jobId": "ai-engineer-intern",
+      "company_job_url": "https://www.revrag.ai/careers/ai-engineer-intern",
+      "title": "AI Engineer Intern",
+      "department": "AI & Data",
+      "location": "On-site, Bengaluru",
+      "employment_type": "Internship (6 months)",
+      "experience_text": "6 months, with a PPO based on performance",
+      "application_status": "Accepting Applications"
+    },
+    {
+      "jobId": "devsecops-intern",
+      "company_job_url": "https://www.revrag.ai/careers/devsecops-intern",
+      "title": "DevSecOps Intern",
+      "department": "Engineering",
+      "location": "On-site, Bengaluru",
+      "employment_type": "Internship (6 months)",
+      "experience_text": "6 months, with a PPO based on performance",
+      "application_status": "Accepting Applications"
+    },
+    {
+      "jobId": "software-developer-intern-frontend",
+      "company_job_url": "https://www.revrag.ai/careers/software-developer-intern-frontend",
+      "title": "Software Developer Intern (Frontend)",
+      "department": "Engineering",
+      "location": "On-site, Bengaluru",
+      "employment_type": "Internship (6 months)",
+      "experience_text": "6 months, with a PPO based on performance",
+      "application_status": "Accepting Applications"
+    },
+    {
+      "jobId": "software-developer-intern-backend",
+      "company_job_url": "https://www.revrag.ai/careers/software-developer-intern-backend",
+      "title": "Software Developer Intern (Backend)",
+      "department": "Engineering",
+      "location": "On-site, Bengaluru",
+      "employment_type": "Internship (6 months)",
+      "experience_text": "6 months, with a PPO based on performance",
+      "application_status": "Accepting Applications"
+    },
+    {
+      "jobId": "forward-deployed-engineer-intern",
+      "company_job_url": "https://www.revrag.ai/careers/forward-deployed-engineer-intern",
+      "title": "Forward Deployed Engineer (FDE) Intern",
+      "department": "GTM and Revenue",
+      "location": "On-site, Bengaluru",
+      "employment_type": "Internship (6 months)",
+      "experience_text": "6 months, with a PPO based on performance",
+      "application_status": "Accepting Applications"
+    },
+    {
+      "jobId": "customer-success-intern",
+      "company_job_url": "https://www.revrag.ai/careers/customer-success-intern",
+      "title": "Customer Success Intern",
+      "department": "GTM and Revenue",
+      "location": "On-site, Bengaluru",
+      "employment_type": "Internship (6 months)",
+      "experience_text": "6 months, with a PPO based on performance",
+      "application_status": "Accepting Applications"
+    }
+  ]
+}

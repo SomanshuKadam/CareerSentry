@@ -285,7 +285,7 @@ button { cursor: pointer; }
 .health-score-label { color: var(--ink-500); font-size: 11px; }
 .health-score { margin-top: 5px; color: var(--ink-950); font-size: 31px; letter-spacing: -.07em; line-height: 1; font-weight: 710; }
 .health-score small { color: var(--ink-400); font-size: 13px; font-weight: 500; letter-spacing: -.02em; }
-.health-ring { position: relative; width: 53px; height: 53px; border-radius: 50%; background: conic-gradient(var(--mint) 0 96%, #e8eef3 96% 100%); }
+.health-ring { position: relative; width: 53px; height: 53px; border-radius: 50%; background: conic-gradient(var(--mint) 0 100%, #e8eef3 100% 100%); }
 .health-ring::after { content: ""; position: absolute; inset: 5px; border-radius: 50%; background: #fff; }
 .health-ring span { position: absolute; inset: 0; z-index: 1; display: grid; place-items: center; color: #27866d; font-family: var(--font-mono), monospace; font-size: 10px; font-weight: 500; }
 .health-list { display: grid; gap: 12px; }

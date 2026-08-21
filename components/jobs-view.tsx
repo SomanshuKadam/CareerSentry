@@ -56,7 +56,7 @@ export function JobsView() {
       </div>
 
       {view === "table" ? <section className="panel table-wrap"><table className="data-table jobs-table"><thead><tr><th>Role</th><th>Location</th><th>Match</th><th>State</th><th>Published</th><th>Source</th></tr></thead><tbody>{filteredJobs.map((job) => <JobTableRow job={job} key={job.jobId} />)}</tbody></table>{filteredJobs.length === 0 ? <div className="table-empty"><strong>No roles match that search</strong><p>Try a broader title, location, or skill.</p></div> : null}</section> : <section className="job-card-list">{filteredJobs.map((job) => <Link href={`/jobs/${job.jobId}`} className="job-card" key={job.jobId}><div className="job-card-head"><CompanyMark mark={job.companyMark} tone={job.companyTone} size="md" /><div className="job-title-wrap"><span className="job-title">{job.title}</span><span className="job-company">{job.company} · {job.department}</span></div><span className="score-pill">{job.matchScore}%</span></div><div className="job-card-meta"><span><MapPin size={12} />{job.location}</span><span>{job.workplaceType}</span><StatusBadge status={job.state === "new" ? "New" : job.state === "changed" ? "Changed" : "Active"} /></div><div className="job-card-reasons">{job.matchReasons.map((reason) => <span key={reason}>{reason}</span>)}</div></Link>)}</section>}
-      <p className="footer-note">{filteredJobs.length} roles in the sanitized snapshot · Official links are shown for provenance review.</p>
+      <p className="footer-note">{filteredJobs.length} roles in the saved RevRag recovery evidence · Official role pages are shown for provenance review; application routes are not collected.</p>
     </>
   );
 }

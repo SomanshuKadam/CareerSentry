@@ -6,7 +6,7 @@ const details = {
     location: "Bangalore, Karnataka, India",
     team: "Engineering",
     workplace: "Hybrid",
-    description: "Build reliable APIs and distributed services for a fictional career platform.",
+    description: "Build reliable APIs and distributed services for the CareerSentry-owned healing fixture.",
   },
   "CS-102": {
     title: "Software Engineer II",
@@ -35,7 +35,7 @@ export default function FixtureJobPage({ params }: { params: { jobId: string } }
   return (
     <main className="collector-lab collector-lab__detail">
       <a href="/demo-target?layout=a">Back to public roles</a>
-      <p className="collector-lab__eyebrow">Fictional public role · {params.jobId}</p>
+      <p className="collector-lab__eyebrow">CareerSentry-owned fixture role / {params.jobId}</p>
       <h1>{job.title}</h1>
       <dl className="job-card__facts">
         <div><dt>Location</dt><dd>{job.location}</dd></div>

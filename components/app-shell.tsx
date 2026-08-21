@@ -36,13 +36,13 @@ type NavItem = {
 
 const primaryNav: NavItem[] = [
   { label: "Overview", href: "/", icon: LayoutDashboard },
-  { label: "Jobs", href: "/jobs", icon: Briefcase, badge: "18" },
+  { label: "Jobs", href: "/jobs", icon: Briefcase, badge: "10" },
   { label: "Companies", href: "/companies", icon: Building2 },
 ];
 
 const reliabilityNav: NavItem[] = [
-  { label: "Collector health", href: "/collectors", icon: Activity, badge: "1" },
-  { label: "Incidents", href: "/incidents", icon: AlertTriangle, badge: "2" },
+  { label: "Collector health", href: "/collectors", icon: Activity, badge: "2" },
+  { label: "Incidents", href: "/incidents", icon: AlertTriangle, badge: "1" },
   { label: "Run history", href: "/history", icon: Clock3 },
 ];
 
@@ -91,7 +91,7 @@ function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
           <span className="workspace-avatar">D</span>
           <span className="workspace-copy">
             <span className="workspace-label">Workspace</span>
-            <span className="workspace-name">Demo workspace</span>
+            <span className="workspace-name">Evidence workspace</span>
           </span>
           <ChevronDown size={15} />
         </button>

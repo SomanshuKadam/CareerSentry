@@ -4,8 +4,6 @@ CareerSentry is a provenance-aware, self-healing career intelligence agent for t
 
 > Current state: the product shell and owned layout A/B catalog are deployed at [career-sentry.vercel.app](https://career-sentry.vercel.app). A custom Scraper Studio collector has completed a three-row fixture run; its first saved schema repair failed post-approval verification and remains an intentionally visible reliability incident. Real-company collection stays disabled until a target passes the provenance, policy, Marketplace, and budget gates.
 
-The canonical project decisions and status live in [HACKATHON_PLAN.md](./HACKATHON_PLAN.md). Read it before changing scope or implementation.
-
 ## What is implemented
 
 - Responsive Next.js dashboard with Overview, Jobs, Companies, Collector Health, Incidents, and Run History screens.
@@ -104,7 +102,7 @@ Public visibility is not treated as permission. Before any real collection, the 
 - one-input credit gate;
 - schema and provenance validation.
 
-Nutanix is currently blocked pending express written permission. Canva is paused because its current Terms leave the separate careers-host scope ambiguous. See `docs/` and the source-of-truth plan for evidence.
+Nutanix is currently blocked pending express written permission. Canva is paused because its current Terms leave the separate careers-host scope ambiguous. See the target research under `docs/` for evidence.
 
 ## AI usage disclosure
 

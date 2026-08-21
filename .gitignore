@@ -22,3 +22,7 @@ data/private/
 .vscode/
 .DS_Store
 Thumbs.db
+
+# Local planning and agent instructions
+HACKATHON_PLAN.md
+AGENTS.md

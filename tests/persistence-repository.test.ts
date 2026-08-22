@@ -93,7 +93,9 @@ function fakeDatabase(options: { failOnCanonicalInsert?: boolean } = {}) {
                 applyUrl: null,
                 sourceCatalogUrl: job.sourceCatalogUrl,
                 collectorId: job.collectorId,
-                collectedAt: job.collectedAt,
+                // postgres-js returns `timestamp with time zone` in this
+                // space-separated form when Drizzle uses mode: "string".
+                collectedAt: "2026-08-22 10:00:00.000+00",
                 sourceLocation: null,
               },
             ];
@@ -120,7 +122,7 @@ function fakeDatabase(options: { failOnCanonicalInsert?: boolean } = {}) {
                 applyUrl: null,
                 sourceCatalogUrl: job.sourceCatalogUrl,
                 collectorId: job.collectorId,
-                collectedAt: job.collectedAt,
+                collectedAt: "2026-08-22 10:00:00.000+00",
                 sourceLocation: null,
               },
             ]);
@@ -233,7 +235,11 @@ describe("PostgreSQL persistence repository", () => {
 
     expect(snapshot).toMatchObject({
       run: { runId: "run_good", status: "healthy" },
-      jobs: [{ jobId: "role-1", companyJobUrl: "https://www.revrag.ai/careers/role-1" }],
+      jobs: [{
+        jobId: "role-1",
+        companyJobUrl: "https://www.revrag.ai/careers/role-1",
+        collectedAt: "2026-08-22T10:00:00.000Z",
+      }],
     });
   });
 });

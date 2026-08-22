@@ -2,7 +2,7 @@
 
 CareerSentry is a provenance-aware, self-healing career intelligence agent for the [Into the Scrape-Verse](https://www.wemakedevs.org/hackathons/scrape-verse) hackathon. It keeps official career paths, normalized job records, collector health, and bounded healing evidence visible in one workspace.
 
-> Current state: collector `c_mt3ctgtj2rqnwsqm8p` was run against the public RevRag AI careers catalog. Its initial saved run returned 15 entries (10 valid active roles and 5 rejected error envelopes); an approval-gated cleanup was saved on the same Collector ID and verification returned 10 clean rows. A protected Collector-ID API, atomic PostgreSQL persistence boundary, and runtime read model are implemented. Neon PostgreSQL is provisioned and migrated in Vercel Production, but no live snapshot has been written because the server-only Bright Data token and run key are not configured yet; the site therefore uses its explicitly labeled saved-evidence fallback. The separate CareerSentry-owned layout A/B catalog remains the deterministic healing lab, with layout B unresolved.
+> Current state: collector `c_mt3ctgtj2rqnwsqm8p` was run against the public RevRag AI careers catalog. Its initial saved run returned 15 entries (10 valid active roles and 5 rejected error envelopes); an approval-gated cleanup was saved on the same Collector ID and verification returned 10 clean rows. A later, explicitly authorized protected run persisted a healthy 13-row snapshot in Neon PostgreSQL, and the production dashboard now renders that last-known-good snapshot. The separate CareerSentry-owned layout A/B catalog remains the deterministic healing lab, with layout B unresolved.
 
 ## What is implemented
 
@@ -126,7 +126,7 @@ Public visibility is not treated as permission. Before any future real collectio
 - one-input credit and budget gate; and
 - schema, provenance, and personal-data exclusion checks.
 
-The current RevRag records reflect a completed run and approval-gated same-ID cleanup from this workspace. The initial degraded result and recovered 10-row verification are retained as saved evidence; they must not be interpreted as permission to rerun collection. Neon PostgreSQL is now configured and migrated in Production, but its three CareerSentry tables remain empty until the owner adds the server-only Bright Data token and run key and explicitly triggers one live snapshot. When configured and populated, the dashboard prefers the persisted last-known-good snapshot and exposes only sanitized run/incident metadata. Other target research remains policy evidence only and is intentionally absent from the product data.
+The current RevRag records reflect a completed run and approval-gated same-ID cleanup from this workspace. The initial degraded result and recovered 10-row verification remain retained as historical saved evidence; they must not be interpreted as permission to rerun collection. Neon PostgreSQL is configured and migrated in Production, and one explicitly authorized protected run is persisted as a healthy 13-row snapshot. The dashboard prefers that persisted last-known-good snapshot and exposes only sanitized run/incident metadata. Other target research remains policy evidence only and is intentionally absent from the product data.
 
 ## AI usage disclosure
 
@@ -139,4 +139,4 @@ Codex and user-authorized subagents are used for research, implementation, revie
 - Application links and form fields are excluded from the sanitized evidence.
 - Scraped content is untrusted and must be validated before rendering or reaching an LLM.
 - Tokens, `.env` files, resumes, and private job-search results are excluded from the repository.
-- No live Bright Data request is made by the current dashboard state.
+- Dashboard page loads never trigger Bright Data. Collection remains limited to the protected server-only endpoint and requires the configured run key, token, and database.

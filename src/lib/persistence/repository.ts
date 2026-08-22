@@ -307,6 +307,24 @@ function validateInput(input: PersistenceRunInput, now: string): {
   };
 }
 
+/**
+ * Drizzle's postgres-js driver returns `timestamp with time zone` values in
+ * PostgreSQL's space-separated form (`YYYY-MM-DD HH:mm:ss.SSS+00`). The
+ * domain contracts deliberately require ISO 8601 strings, so normalize at the
+ * persistence boundary instead of leaking driver-specific formatting into the
+ * dashboard read model.
+ */
+function databaseInstant(value: string, field: string): string {
+  const candidate = value.trim();
+  const withIsoSeparator = candidate.includes("T") ? candidate : candidate.replace(" ", "T");
+  const withIsoOffset = withIsoSeparator.replace(/([+-]\d{2})$/, "$1:00");
+  const parsed = new Date(withIsoOffset);
+  if (Number.isNaN(parsed.getTime())) {
+    throw new PersistenceInputError(`${field} is not a readable database timestamp`);
+  }
+  return parsed.toISOString();
+}
+
 function runSummary(row: CollectorRunRow, incidentId?: string): PersistedRunSummary {
   return {
     runId: row.runId,
@@ -320,9 +338,9 @@ function runSummary(row: CollectorRunRow, incidentId?: string): PersistedRunSumm
     validRowCount: row.validRowCount,
     errorRowCount: row.errorRowCount,
     health: row.healthSummary ?? undefined,
-    startedAt: row.startedAt,
-    completedAt: row.completedAt ?? undefined,
-    createdAt: row.createdAt,
+    startedAt: databaseInstant(row.startedAt, "startedAt"),
+    completedAt: row.completedAt ? databaseInstant(row.completedAt, "completedAt") : undefined,
+    createdAt: databaseInstant(row.createdAt, "createdAt"),
   };
 }
 
@@ -342,7 +360,7 @@ function jobRecord(row: CanonicalJobRow): JobRecord {
     applyUrl: row.applyUrl ?? undefined,
     sourceCatalogUrl: row.sourceCatalogUrl,
     collectorId: row.collectorId,
-    collectedAt: row.collectedAt,
+    collectedAt: databaseInstant(row.collectedAt, "collectedAt"),
     sourceLocation: row.sourceLocation ?? undefined,
   });
 }
@@ -357,7 +375,7 @@ function incidentRecord(row: HealthIncidentRow): PersistedIncident {
     reasons: [...row.reasons],
     evidence: row.evidence ?? undefined,
     healPrompt: row.healPrompt ?? undefined,
-    createdAt: row.createdAt,
+    createdAt: databaseInstant(row.createdAt, "createdAt"),
   };
 }
 

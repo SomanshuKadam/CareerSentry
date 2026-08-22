@@ -8,7 +8,7 @@ CareerSentry is a provenance-aware, self-healing career intelligence agent for t
 
 - Responsive, content-first Next.js product with four public destinations: Home, real RevRag Jobs, Reliability evidence, and the clearly labeled project-owned Healing demo.
 - Retired dashboard routes redirect to Reliability, so old shared links do not become 404 pages.
-- Ten verified RevRag AI roles with stable `jobId` values derived only from each unique same-origin `/careers/{slug}` URL.
+- A current persisted RevRag AI snapshot with 13 healthy roles, plus historical 10-role cleanup evidence; stable `jobId` values are derived only from unique same-origin `/careers/{slug}` URLs.
 - Sanitized public evidence under [`docs/evidence/revrag-verified.json`](./docs/evidence/revrag-verified.json); no application URLs, resumes, candidate fields, credentials, or personal data.
 - A clear source registry separating saved RevRag run/recovery evidence from the CareerSentry-owned healing lab.
 - Strict Zod `JobRecord` contract, location normalization, URL/job-ID deduplication, and lifecycle helpers.
@@ -17,7 +17,7 @@ CareerSentry is a provenance-aware, self-healing career intelligence agent for t
 - Provider-neutral PostgreSQL/Drizzle schema and migration for collector runs, canonical jobs, and sanitized health incidents. Healthy runs commit atomically; degraded runs never replace last-known-good jobs.
 - Runtime read model that prefers the persisted last-known-good snapshot and otherwise labels the bundled evidence fallback explicitly.
 - Project-owned public layout A/B catalog plus stable server-rendered `/demo-target/live` input, controlled only by `CAREERSENTRY_FIXTURE_LAYOUT`.
-- Approval-gated same-collector healing evidence. The layout B repair remains visibly rejected after saved-template verification failed.
+- Approval-gated same-collector RevRag output cleanup is verified. The separate fictional page-change repair remains visibly rejected after saved-template verification failed.
 - Read-only target research under `docs/`; researched targets are not represented as collected jobs in the UI.
 
 ## Local setup

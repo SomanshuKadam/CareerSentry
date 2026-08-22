@@ -1,26 +1,13 @@
-export type WorkplaceType = "remote" | "hybrid" | "onsite" | "unknown";
-export type JobState = "new" | "changed" | "active" | "closed";
 export type HealthStatus = "healthy" | "degraded" | "recovering" | "needs_review";
 
 export type DemoJob = {
-  companyId: string;
-  company: string;
-  companyMark: string;
-  companyTone: string;
   jobId: string;
   title: string;
   location: string;
-  workplaceType: WorkplaceType;
   department: string;
   employmentType: string;
-  publishedAt: string;
-  collectedAt: string;
   companyJobUrl: string;
   sourceCatalogUrl: string;
-  collectorId: string;
-  state: JobState;
-  matchScore: number;
-  matchReasons: string[];
 };
 
 export type DemoCompany = {
@@ -61,13 +48,6 @@ export const healingLabCollectorId = "c_mt1wzptjco00s7w0p";
 export const revragCatalogUrl = "https://www.revrag.ai/careers";
 export const savedRecoveryLabel = "Saved verification / 10 clean rows";
 
-export const demoProfile = {
-  role: "Software / Backend Engineer",
-  level: "Example matching profile",
-  locations: ["Bengaluru", "Remote India"],
-  skills: ["Java", "Python", "TypeScript", "APIs", "Distributed systems"],
-};
-
 type VerifiedRole = {
   companyJobUrl: string;
   title: string;
@@ -75,8 +55,6 @@ type VerifiedRole = {
   location: string;
   employmentType: string;
   experienceText: string;
-  matchScore: number;
-  matchReasons: string[];
 };
 
 const verifiedRoles: VerifiedRole[] = [
@@ -87,8 +65,6 @@ const verifiedRoles: VerifiedRole[] = [
     location: "On-site, Bengaluru",
     employmentType: "Internship (6 months)",
     experienceText: "6 months, with a PPO based on performance",
-    matchScore: 78,
-    matchReasons: ["AI product work", "Bengaluru", "Analytical systems"],
   },
   {
     companyJobUrl: "https://www.revrag.ai/careers/data-scientist-intern",
@@ -97,8 +73,6 @@ const verifiedRoles: VerifiedRole[] = [
     location: "On-site, Bengaluru",
     employmentType: "Internship (6 months)",
     experienceText: "6 months, with a PPO based on performance",
-    matchScore: 84,
-    matchReasons: ["Python", "AI & data", "Bengaluru"],
   },
   {
     companyJobUrl: "https://www.revrag.ai/careers/growth-associate",
@@ -107,8 +81,6 @@ const verifiedRoles: VerifiedRole[] = [
     location: "On-site, Bengaluru",
     employmentType: "Full-time",
     experienceText: "2 to 3+ years",
-    matchScore: 48,
-    matchReasons: ["Bengaluru", "Cross-functional team", "AI company"],
   },
   {
     companyJobUrl: "https://www.revrag.ai/careers/product-design-intern",
@@ -117,8 +89,6 @@ const verifiedRoles: VerifiedRole[] = [
     location: "On-site, Bengaluru",
     employmentType: "Internship (6 months)",
     experienceText: "6 months, with a PPO based on performance",
-    matchScore: 43,
-    matchReasons: ["Product team", "Bengaluru", "AI products"],
   },
   {
     companyJobUrl: "https://www.revrag.ai/careers/ai-engineer-intern",
@@ -127,8 +97,6 @@ const verifiedRoles: VerifiedRole[] = [
     location: "On-site, Bengaluru",
     employmentType: "Internship (6 months)",
     experienceText: "6 months, with a PPO based on performance",
-    matchScore: 92,
-    matchReasons: ["AI systems", "Python", "Evaluation pipelines"],
   },
   {
     companyJobUrl: "https://www.revrag.ai/careers/devsecops-intern",
@@ -137,8 +105,6 @@ const verifiedRoles: VerifiedRole[] = [
     location: "On-site, Bengaluru",
     employmentType: "Internship (6 months)",
     experienceText: "6 months, with a PPO based on performance",
-    matchScore: 69,
-    matchReasons: ["Engineering", "APIs", "Production systems"],
   },
   {
     companyJobUrl: "https://www.revrag.ai/careers/software-developer-intern-frontend",
@@ -147,8 +113,6 @@ const verifiedRoles: VerifiedRole[] = [
     location: "On-site, Bengaluru",
     employmentType: "Internship (6 months)",
     experienceText: "6 months, with a PPO based on performance",
-    matchScore: 81,
-    matchReasons: ["TypeScript", "Engineering", "AI products"],
   },
   {
     companyJobUrl: "https://www.revrag.ai/careers/software-developer-intern-backend",
@@ -157,8 +121,6 @@ const verifiedRoles: VerifiedRole[] = [
     location: "On-site, Bengaluru",
     employmentType: "Internship (6 months)",
     experienceText: "6 months, with a PPO based on performance",
-    matchScore: 95,
-    matchReasons: ["Backend", "APIs", "Production systems"],
   },
   {
     companyJobUrl: "https://www.revrag.ai/careers/forward-deployed-engineer-intern",
@@ -167,8 +129,6 @@ const verifiedRoles: VerifiedRole[] = [
     location: "On-site, Bengaluru",
     employmentType: "Internship (6 months)",
     experienceText: "6 months, with a PPO based on performance",
-    matchScore: 75,
-    matchReasons: ["AI systems", "APIs", "Customer-facing engineering"],
   },
   {
     companyJobUrl: "https://www.revrag.ai/careers/customer-success-intern",
@@ -177,8 +137,6 @@ const verifiedRoles: VerifiedRole[] = [
     location: "On-site, Bengaluru",
     employmentType: "Internship (6 months)",
     experienceText: "6 months, with a PPO based on performance",
-    matchScore: 42,
-    matchReasons: ["Bengaluru", "AI company", "Cross-functional team"],
   },
 ];
 
@@ -201,24 +159,13 @@ if (new Set(verifiedJobIds).size !== verifiedJobIds.length) {
 }
 
 export const demoJobs: DemoJob[] = verifiedRoles.map((role, index) => ({
-  companyId: "revrag-ai",
-  company: "RevRag AI",
-  companyMark: "R",
-  companyTone: "violet",
   jobId: verifiedJobIds[index]!,
   title: role.title,
   location: role.location,
-  workplaceType: "onsite",
   department: role.department,
   employmentType: role.employmentType,
-  publishedAt: "Not published by source",
-  collectedAt: savedRecoveryLabel,
   companyJobUrl: role.companyJobUrl,
   sourceCatalogUrl: revragCatalogUrl,
-  collectorId: revragCollectorId,
-  state: "active",
-  matchScore: role.matchScore,
-  matchReasons: role.matchReasons,
 }));
 
 export const demoCompanies: DemoCompany[] = [

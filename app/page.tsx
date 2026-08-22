@@ -13,26 +13,25 @@ export default async function HomePage() {
         <p className="eyebrow">CareerSentry</p>
         <h1>Job data that does not fail silently.</h1>
         <p className="hero-copy">
-          CareerSentry collects public roles from official company career pages, checks the
-          result, and keeps the collector repairable when the page changes.
+          We collect public roles from official company career pages, check the result, and
+          keep only the jobs we can explain.
         </p>
         <div className="hero-actions">
-          <Link className="primary-link" href="/jobs">See the {jobs.length} real jobs</Link>
-          <Link className="secondary-link" href="/reliability">See what broke and how it was fixed</Link>
+          <Link className="primary-link" href="/jobs">Browse {jobs.length} verified roles</Link>
+          <Link className="secondary-link" href="/reliability">How reliability works</Link>
         </div>
       </section>
 
       <section className="truth-strip" aria-label="Current project state">
-        <div><span>Real source</span><strong>RevRag AI careers</strong></div>
-        <div><span>Verified result</span><strong>{jobs.length} public roles</strong></div>
-        <div><span>Collector</span><strong>Same ID before and after repair</strong></div>
-        <div><span>Dashboard source</span><strong>{model.source.isPersisted ? "Stored snapshot" : "Saved verified evidence"}</strong></div>
+        <div><span>Official source</span><strong>RevRag AI careers</strong></div>
+        <div><span>Current result</span><strong>{jobs.length} verified roles</strong></div>
+        <div><span>Data status</span><strong>{model.source.isPersisted ? "Stored snapshot" : "Saved verified evidence"}</strong></div>
       </section>
 
       <section className="content-section">
         <div className="section-intro">
-          <p className="eyebrow">The actual project</p>
-          <h2>One real source. One reliability problem. One controlled demo.</h2>
+          <p className="eyebrow">How it works</p>
+          <h2>One real source, checked before it reaches you.</h2>
         </div>
         <div className="story-steps">
           <article>
@@ -47,8 +46,8 @@ export default async function HomePage() {
           </article>
           <article>
             <span>03</span>
-            <h3>Repair</h3>
-            <p>The collector was repaired in place and verified again without changing its ID or the jobs UI.</p>
+            <h3>Keep</h3>
+            <p>Only a healthy result is stored, so the jobs page never silently replaces good data with a broken run.</p>
           </article>
         </div>
       </section>
@@ -57,13 +56,13 @@ export default async function HomePage() {
         <article className="source-card source-card-real">
           <p className="eyebrow">Real company data</p>
           <h2>RevRag AI</h2>
-          <p>{jobs.length} roles retained from a verified public run. No application forms, candidate data, or invented companies.</p>
+          <p>{jobs.length} roles from the current verified snapshot. No application forms, candidate data, or invented companies.</p>
           <Link href="/jobs">Browse the roles →</Link>
         </article>
         <article className="source-card">
-          <p className="eyebrow">Project-owned test site</p>
-          <h2>Healing lab</h2>
-          <p>Three fictional roles exist only to break the page layout safely and demonstrate selector recovery.</p>
+          <p className="eyebrow">Separate fictional test</p>
+          <h2>Self-healing demo</h2>
+          <p>A safe test page changes its HTML while keeping the same three roles, so a scraper failure can be inspected without touching an employer.</p>
           <Link href="/demo-target/live">Open the clearly labeled demo →</Link>
         </article>
       </section>

@@ -28,8 +28,8 @@ describe("public UI contract", () => {
     ].join("\n");
 
     expect(pages).not.toMatch(/matchScore|demoProfile|save example match|tune matching/i);
-    expect(pages).toContain("No invented description");
-    expect(pages).toContain("We do not claim success");
+    expect(pages).toContain("does not store application forms");
+    expect(pages).toContain("we do not claim that this repair succeeded");
   });
 
   it("redirects every retired or previously dead destination", () => {

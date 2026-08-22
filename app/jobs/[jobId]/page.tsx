@@ -6,7 +6,7 @@ import { getDashboardData } from "@/lib/dashboard-data";
 export const dynamic = "force-dynamic";
 
 export default async function JobDetailPage({ params }: { params: { jobId: string } }) {
-  const { jobs, model } = await getDashboardData();
+  const { jobs } = await getDashboardData();
   const job = jobs.find((candidate) => candidate.jobId === params.jobId);
   if (!job) notFound();
 
@@ -26,13 +26,11 @@ export default async function JobDetailPage({ params }: { params: { jobId: strin
             <div><dt>Company</dt><dd>RevRag AI</dd></div>
             <div><dt>Job ID</dt><dd>{job.jobId}</dd></div>
             <div><dt>Source catalog</dt><dd><a href={job.sourceCatalogUrl} target="_blank" rel="noreferrer">revrag.ai/careers ↗</a></dd></div>
-            <div><dt>Collector ID</dt><dd><code>{job.collectorId}</code></dd></div>
-            <div><dt>Dashboard source</dt><dd>{model.source.label}</dd></div>
           </dl>
         </section>
         <aside className="plain-note">
-          <strong>What is not here</strong>
-          <p>No invented description, publish date, application form, candidate data, or fake match score.</p>
+          <strong>Why this record is trusted</strong>
+          <p>It came from RevRag AI&apos;s official public careers catalog. CareerSentry does not store application forms, candidate data, or invented details.</p>
         </aside>
       </article>
     </div>

@@ -40,17 +40,17 @@ export default function DemoTargetPage({ searchParams }: DemoTargetPageProps) {
     <main className={`collector-lab collector-lab--${layout}`}>
       <header className="collector-lab__hero">
         <div>
-          <p className="collector-lab__eyebrow">CareerSentry Collector Lab</p>
-          <h1>Build reliable career data pipelines.</h1>
+          <p className="collector-lab__eyebrow">Self-healing demo · fictional site</p>
+          <h1>What happens when a careers page changes?</h1>
           <p>
-            This project-owned public catalog exists solely for deterministic Bright Data
-            Scraper Studio create, run, and heal demonstrations.
+            These three fictional roles stay the same while the HTML structure changes. This
+            lets us test scraper failure and repair without touching an employer website.
           </p>
         </div>
         <aside aria-label="Fixture information">
-          <strong>Layout {layout.toUpperCase()}</strong>
+          <strong>{layout === "a" ? "Before the page change" : "After the page change"}</strong>
           <span>3 public roles</span>
-          <span>No login or application form</span>
+          <span>Demo only</span>
         </aside>
       </header>
 
@@ -94,8 +94,8 @@ export default function DemoTargetPage({ searchParams }: DemoTargetPageProps) {
       <footer className="collector-lab__footer">
         <p>CareerSentry-owned fixture data. No employer, people, applications, credentials, or personal data.</p>
         <nav aria-label="Fixture layout controls">
-          <a aria-current={layout === "a" ? "page" : undefined} href="/demo-target?layout=a">Layout A</a>
-          <a aria-current={layout === "b" ? "page" : undefined} href="/demo-target?layout=b">Layout B</a>
+          <a aria-current={layout === "a" ? "page" : undefined} href="/demo-target?layout=a">Before the page change</a>
+          <a aria-current={layout === "b" ? "page" : undefined} href="/demo-target?layout=b">After the page change</a>
         </nav>
       </footer>
     </main>

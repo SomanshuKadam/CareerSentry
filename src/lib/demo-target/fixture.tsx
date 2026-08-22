@@ -65,17 +65,17 @@ export function OwnedFixtureCatalog({ layout }: OwnedFixtureCatalogProps): React
     <main className={`collector-lab collector-lab--${layout}`} data-fixture-owned="true">
       <header className="collector-lab__hero">
         <div>
-          <p className="collector-lab__eyebrow">CareerSentry-owned healing fixture</p>
-          <h1>Build reliable career data pipelines.</h1>
+          <p className="collector-lab__eyebrow">Self-healing demo · fictional site</p>
+          <h1>What happens when a careers page changes?</h1>
           <p>
-            This stable catalog is a fictional, project-owned target for deterministic scraper
-            healing tests. It contains no login, application form, or candidate data.
+            These three fictional roles stay the same while the HTML structure changes. This
+            lets us test scraper failure and repair without touching an employer website.
           </p>
         </div>
         <aside aria-label="Owned fixture safeguards">
-          <strong>Layout {layout.toUpperCase()}</strong>
+          <strong>{layout === "a" ? "Before the page change" : "After the page change"}</strong>
           <span>3 fictional public roles</span>
-          <span>No login or application form</span>
+          <span>Demo only</span>
         </aside>
       </header>
 
@@ -141,7 +141,7 @@ export function OwnedFixtureCatalog({ layout }: OwnedFixtureCatalogProps): React
           CareerSentry-owned fictional fixture only. No employer, applications, credentials,
           candidate data, login, or application form.
         </p>
-        <p>Stable URL: {ownedFixturePath}. Layout is selected server-side.</p>
+        <p>Changing the page structure is controlled server-side; the real RevRag jobs are not affected.</p>
       </footer>
     </main>
   );

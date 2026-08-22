@@ -4,35 +4,21 @@ import { getServerDashboardReadModel } from "../src/lib/dashboard/server";
 import {
   demoCollectors,
   demoCompanies,
-  demoJobs,
   demoRuns,
   type DemoJob,
 } from "./demo-data";
 
 export async function getDashboardData() {
   const model = await getServerDashboardReadModel();
-  const savedJobs = new Map(demoJobs.map((job) => [job.jobId, job]));
   const jobs: DemoJob[] = model.records.map((record) => {
-    const saved = savedJobs.get(record.jobId);
     return {
-      companyId: record.companyId,
-      company: "RevRag AI",
-      companyMark: "R",
-      companyTone: "violet",
       jobId: record.jobId,
       title: record.title,
       location: record.sourceLocation ?? record.location,
-      workplaceType: record.workplaceType,
       department: record.department ?? "Not published by source",
       employmentType: record.employmentType ?? "Not published by source",
-      publishedAt: record.publishedAt ?? "Not published by source",
-      collectedAt: model.source.label,
       companyJobUrl: record.companyJobUrl,
       sourceCatalogUrl: record.sourceCatalogUrl,
-      collectorId: record.collectorId,
-      state: "active",
-      matchScore: saved?.matchScore ?? 50,
-      matchReasons: saved?.matchReasons ?? ["Verified source role"],
     };
   });
 

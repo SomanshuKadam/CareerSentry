@@ -26,8 +26,9 @@ describe("stable owned healing fixture", () => {
     for (const layout of ["a", "b"] as const) {
       const markup = render(layout);
 
-      expect(markup).toContain("CareerSentry-owned healing fixture");
-      expect(markup).toContain("No login or application form");
+      expect(markup).toContain("Self-healing demo · fictional site");
+      expect(markup).toContain("Demo only");
+      expect(markup).toContain("real RevRag jobs are not affected");
       expect(markup).not.toContain("<form");
       expect(markup).not.toContain("?layout=");
 

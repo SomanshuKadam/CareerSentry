@@ -45,6 +45,6 @@ The explicit `custom_input` attempt suggests the B page context may have reached
 
 ## Correct next-attempt discipline (not authorized)
 
-If a new attempt is later approved, it should use a selector-only prompt that explicitly says not to change field names, output schema, stages, or downstream shape. The operator should inspect the generated diff and treat the preview as representative field evidence only. Full row count, duplicates, provenance, and unchanged downstream shape must be verified by the one post-approval B run.
+If a new attempt is later approved, it should use the selector-only prompt and gates in [`layout-b-next-plan.md`](./layout-b-next-plan.md). The operator should inspect the generated diff and treat the preview as representative field evidence only. Full row count, duplicates, provenance, and unchanged downstream shape must be verified by the one post-approval B run.
 
 Bright Data's documented flow is asynchronous: trigger Self-Healing, poll progress, review the proposed change, approve or reject it, then collect again. See the [CLI healing reference](https://github.com/brightdata/cli#scraper-heal), [Self-Healing API](https://docs.brightdata.com/api-reference/scraper-studio-api/ai-flow/trigger-self-healing), and [approval API](https://docs.brightdata.com/api-reference/scraper-studio-api/ai-flow/resume-self-healing-job).

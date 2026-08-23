@@ -90,6 +90,7 @@ npm run db:migrate
 - [Degraded layout-B output](./docs/evidence/layout-b-degraded.json): zero rows after the controlled fixture redesign.
 - [Rejected layout-B API-heal preview](./docs/evidence/layout-b-api-heal-rejected.json): one incompatible preview row rejected before save; no post-approval run.
 - [Layout-B healing postmortem](./docs/evidence/layout-b-healing-postmortem.md): separates the CLI-input mistake, preview-sample misinterpretation, invalid schema proposal, and remaining unknowns.
+- [Next layout-B recovery plan](./docs/evidence/layout-b-next-plan.md): selector-only prompt, local contract gate, diff review, and one-run verification procedure; no new live attempt is currently authorized.
 - [Healing incident timeline](./docs/evidence/healing-incident.md): approval decisions, failed verification, same-Collector-ID recovery evidence, and the unresolved layout-B repair.
 
 The evidence is intentionally honest: the RevRag history records the completed initial run, approval-gated same-ID cleanup, and verified recovery, while the layout A/B run is explicitly project-owned healing evidence. Neither surface contains application interactions or personal data.

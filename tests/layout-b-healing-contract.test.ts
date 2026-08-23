@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 
 import rejectedPreview from "../docs/evidence/layout-b-api-heal-rejected.json";
-import { BrightDataIngestionError, mapScraperStudioRows } from "../src/lib/brightdata";
+import {
+  BrightDataIngestionError,
+  mapScraperStudioRows,
+  proposeSchemaMappings,
+} from "../src/lib/brightdata";
 
 const metadata = {
   companyId: "career-sentry-fixture",
@@ -91,5 +95,30 @@ describe("next layout-B healing contract", () => {
     expect(() => mapScraperStudioRows([unknownDepartmentRow], metadata)).toThrow(
       /department/,
     );
+  });
+
+  it("proposes semantic mappings for review and applies them only when approved", () => {
+    const semanticRow = { ...layoutBContractRows[0] } as Record<string, unknown>;
+    delete semanticRow.department;
+    semanticRow.function = "Engineering";
+
+    const proposals = proposeSchemaMappings([semanticRow]);
+    expect(proposals).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          sourceField: "function",
+          targetField: "department",
+          decision: "review",
+        }),
+      ]),
+    );
+    expect(() => mapScraperStudioRows([semanticRow], metadata)).toThrow(/department/);
+
+    const records = mapScraperStudioRows([semanticRow], metadata, {
+      approvedSchemaMappings: [
+        { sourceField: "function", targetField: "department" },
+      ],
+    });
+    expect(records[0]?.department).toBe("Engineering");
   });
 });

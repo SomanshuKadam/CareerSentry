@@ -7,6 +7,11 @@ import {
   type WorkplaceType,
 } from "../domain";
 import { normalizeJobRecord } from "../domain/normalization";
+import {
+  isApprovedSchemaMapping,
+  proposeSchemaMappings,
+  type ApprovedSchemaMapping,
+} from "./schema-mapping";
 
 /**
  * Raw business fields requested from a Scraper Studio Discovery collector.
@@ -70,6 +75,10 @@ export type BrightDataIngestionMetadata = {
   workplaceType?: WorkplaceType;
 };
 export type BrightDataProvenance = BrightDataIngestionMetadata;
+
+export type BrightDataIngestionOptions = {
+  approvedSchemaMappings?: readonly ApprovedSchemaMapping[];
+};
 
 export type BrightDataIngestionErrorCode =
   | "metadata_invalid"
@@ -212,8 +221,23 @@ function applyApprovedAlias(
 export function normalizeScraperStudioRowAliases(
   value: unknown,
   rowIndex = 0,
+  options: BrightDataIngestionOptions = {},
 ): Record<string, unknown> {
   const object = { ...ensureRowObject(value, rowIndex) };
+  const proposals = proposeSchemaMappings([object]);
+  const approvedMappings = options.approvedSchemaMappings ?? [];
+
+  for (const proposal of proposals) {
+    const canApply =
+      proposal.decision === "auto" ||
+      isApprovedSchemaMapping(proposal, approvedMappings);
+
+    if (!canApply || proposal.targetField === null) continue;
+    if (proposal.sourceField === "role_id") continue;
+
+    applyApprovedAlias(object, proposal.targetField, proposal.sourceField, rowIndex);
+  }
+
   const roleId = nonEmptyString(object.role_id);
   const jobId = nonEmptyString(object.job_id);
   const legacyJobId = nonEmptyString(object.job_id_value);
@@ -244,8 +268,12 @@ export function normalizeScraperStudioRowAliases(
   return object;
 }
 
-function parseRawRow(value: unknown, rowIndex: number): ScraperStudioRow {
-  const object = normalizeScraperStudioRowAliases(value, rowIndex);
+function parseRawRow(
+  value: unknown,
+  rowIndex: number,
+  options: BrightDataIngestionOptions,
+): ScraperStudioRow {
+  const object = normalizeScraperStudioRowAliases(value, rowIndex, options);
   const hasJobId = Object.prototype.hasOwnProperty.call(object, "job_id");
   const hasLegacyJobId = Object.prototype.hasOwnProperty.call(object, "job_id_value");
   const jobId = typeof object.job_id === "string" ? object.job_id.trim() : "";
@@ -333,12 +361,13 @@ function validateOptionalUrl(
 export function mapScraperStudioRows(
   rows: readonly unknown[],
   metadata: BrightDataIngestionMetadata,
+  options: BrightDataIngestionOptions = {},
 ): JobRecord[] {
   const allowedOrigins = validateMetadata(metadata);
   const records: JobRecord[] = [];
 
   rows.forEach((rawRow, rowIndex) => {
-    const row = parseRawRow(rawRow, rowIndex);
+    const row = parseRawRow(rawRow, rowIndex, options);
     const companyJobUrl = validateCompanyJobUrl(
       row.company_job_url,
       rowIndex,

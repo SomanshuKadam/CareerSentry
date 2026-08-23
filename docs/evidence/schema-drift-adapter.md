@@ -13,6 +13,8 @@ Bright Data Self-Healing may propose changed output labels and asks the operator
 
 The adapter does not infer arbitrary labels, change the PostgreSQL schema, weaken URL or row validation, or silently accept unknown fields. The canonical contract remains `job_id_value`, `title`, `location`, `department`, `employment_type`, and `company_job_url`.
 
+For less certain labels such as `function`, `business_unit`, `role_type`, or `based_in`, the proposal layer returns a review-level suggestion with confidence, reason, and evidence. It does not apply that suggestion unless the caller explicitly approves the exact source-to-target mapping. Values such as `Engineering`, `Support`, or `Manager` are preserved as values; they are never reclassified solely from their text.
+
 The adapter makes a future Bright Data schema-update proposal testable, but it does not make the latest Layout-B experiment successful: no alternate-schema draft was approved or run, so full three-row B verification remains outstanding. A future live attempt still requires explicit approval and must validate the complete post-acceptance output before saving production.
 
 See the [Bright Data Self-Healing guide](https://docs.brightdata.com/datasets/scraper-studio/self-healing-tool) for its documented diff, draft-preview, schema-confirmation, and production-save sequence.

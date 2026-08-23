@@ -77,6 +77,7 @@ export type BrightDataIngestionErrorCode =
   | "legacy_job_id_field"
   | "missing_requisition"
   | "conflicting_requisition"
+  | "conflicting_alias"
   | "error_envelope"
   | "missing_company_job_url"
   | "origin_not_allowed"
@@ -175,8 +176,76 @@ function ensureRowObject(value: unknown, rowIndex: number): Record<string, unkno
   return value as Record<string, unknown>;
 }
 
+function nonEmptyString(value: unknown): string | undefined {
+  if (typeof value !== "string") return undefined;
+  const normalized = value.trim();
+  return normalized.length > 0 ? normalized : undefined;
+}
+
+function applyApprovedAlias(
+  object: Record<string, unknown>,
+  canonicalField: string,
+  aliasField: string,
+  rowIndex: number,
+): void {
+  const canonicalValue = nonEmptyString(object[canonicalField]);
+  const aliasValue = nonEmptyString(object[aliasField]);
+
+  if (canonicalValue && aliasValue && canonicalValue !== aliasValue) {
+    throw new BrightDataIngestionError(
+      `Scraper Studio row ${rowIndex} has conflicting values in ${canonicalField} and approved alias ${aliasField}`,
+      "conflicting_alias",
+      rowIndex,
+    );
+  }
+
+  if (!canonicalValue && aliasValue) {
+    object[canonicalField] = aliasValue;
+  }
+}
+
+/**
+ * Normalize only schema aliases observed in an approved Bright Data
+ * Self-Healing proposal. This is deliberately an allow-list, not an AI
+ * guesser: unknown labels remain invalid at the canonical schema boundary.
+ */
+export function normalizeScraperStudioRowAliases(
+  value: unknown,
+  rowIndex = 0,
+): Record<string, unknown> {
+  const object = { ...ensureRowObject(value, rowIndex) };
+  const roleId = nonEmptyString(object.role_id);
+  const jobId = nonEmptyString(object.job_id);
+  const legacyJobId = nonEmptyString(object.job_id_value);
+
+  if (roleId && jobId && roleId !== jobId) {
+    throw new BrightDataIngestionError(
+      `Scraper Studio row ${rowIndex} has conflicting requisition values in job_id and approved alias role_id`,
+      "conflicting_requisition",
+      rowIndex,
+    );
+  }
+
+  if (roleId && legacyJobId && roleId !== legacyJobId) {
+    throw new BrightDataIngestionError(
+      `Scraper Studio row ${rowIndex} has conflicting requisition values in job_id_value and approved alias role_id`,
+      "conflicting_requisition",
+      rowIndex,
+    );
+  }
+
+  if (roleId && !jobId && !legacyJobId) {
+    object.job_id_value = roleId;
+  }
+
+  applyApprovedAlias(object, "department", "team", rowIndex);
+  applyApprovedAlias(object, "company_job_url", "official_role_url", rowIndex);
+
+  return object;
+}
+
 function parseRawRow(value: unknown, rowIndex: number): ScraperStudioRow {
-  const object = ensureRowObject(value, rowIndex);
+  const object = normalizeScraperStudioRowAliases(value, rowIndex);
   const hasJobId = Object.prototype.hasOwnProperty.call(object, "job_id");
   const hasLegacyJobId = Object.prototype.hasOwnProperty.call(object, "job_id_value");
   const jobId = typeof object.job_id === "string" ? object.job_id.trim() : "";

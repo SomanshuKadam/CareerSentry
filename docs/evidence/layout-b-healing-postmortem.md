@@ -36,6 +36,12 @@ The preview changed field names and appeared to use an alternative schema despit
 
 The explicit `custom_input` attempt suggests the B page context may have reached the AI flow—the returned values match the B page's labels—but the discarded diff is unavailable, so this remains an inference rather than proof.
 
+## Contract boundary added after the incident
+
+CareerSentry now has an allowlisted schema-drift adapter for the observed Bright Data aliases: `role_id` can map to `job_id_value`, `team` to `department`, and `official_role_url` to `company_job_url`. Known platform metadata remains ignored, while unknown or conflicting mappings are rejected. This lets a future Bright Data schema-update proposal be evaluated without changing the database contract.
+
+This does not retroactively make the rejected healing attempt successful. That proposal was never approved or run, so its full B output was never verified. The adapter only changes the future acceptance gate: a complete post-acceptance run must still produce exactly the expected roles and valid canonical fields.
+
 ## What was done correctly
 
 - The stable Collector ID was preserved.

@@ -101,6 +101,19 @@
     "saved": false,
     "post_approval_verification": "not_run"
   },
+  "post_implementation_contract_adapter": {
+    "allowlisted_aliases": {
+      "role_id": "job_id_value",
+      "team": "department",
+      "official_role_url": "company_job_url"
+    },
+    "known_metadata_ignored": [
+      "product_page_url",
+      "input"
+    ],
+    "full_run_revalidation": "not_run",
+    "does_not_retroactively_make_this_attempt_successful": true
+  },
   "view_url": "https://brightdata.com/cp/scrapers/c_mt5mfwuv2910ltr23s",
   "restoration": {
     "fixture_layout": "a",

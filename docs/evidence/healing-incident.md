@@ -51,3 +51,5 @@ The next owner-authorized attempt used the shorter selector-only prompt and reta
 ## Current state
 
 The collector remains valid for layout A. Layout B is a documented unresolved `needs_review` incident because the prior saved repair still returned zero rows and both later proposals were rejected before save. This is honest failure evidence, not a simulated success claim.
+
+CareerSentry subsequently added a strict allowlisted adapter for the observed Bright Data schema aliases. That adapter preserves the database contract while permitting a future full-run validation of an explicitly confirmed Bright Data schema change; it does not alter the unresolved status of this incident.

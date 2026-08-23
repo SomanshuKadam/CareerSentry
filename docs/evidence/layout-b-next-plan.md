@@ -6,6 +6,8 @@ The goal remains unchanged: repair collector `c_mt5mfwuv2910ltr23s` in place so 
 
 The owner-authorized attempt used this plan's selector-only prompt. Bright Data changed the B parser selectors, but its final collection mapping still emitted the incompatible legacy fields. The proposal was rejected before save, the fixture was restored to A, and no post-approval run occurred. See [`layout-b-selector-heal-rejected.json`](./layout-b-selector-heal-rejected.json).
 
+CareerSentry now has an offline, allowlisted schema-drift adapter for the observed legacy labels. A future live attempt may evaluate Bright Data's explicitly confirmed schema through that adapter, but only a complete post-acceptance run can establish recovery.
+
 ## Preparation completed
 
 - Keep production on safe layout A.

@@ -52,14 +52,44 @@ describe("next layout-B healing contract", () => {
     ]);
   });
 
-  it("rejects the alternate schema proposed by the last preview", () => {
+  it("maps the approved Bright Data schema aliases into the same downstream shape", () => {
     expect(rejectedPreview.preview_semantics).toContain("sample_output_only");
 
-    expect(() => mapScraperStudioRows(rejectedPreview.preview_rows, metadata)).toThrow(
+    const records = mapScraperStudioRows(rejectedPreview.preview_rows, metadata);
+
+    expect(records).toHaveLength(1);
+    expect(records[0]).toMatchObject({
+      jobId: "CS-101",
+      title: "Backend Engineer",
+      department: "Engineering",
+      companyJobUrl:
+        "https://career-sentry.vercel.app/demo-target/jobs/CS-101",
+    });
+    expect(records[0]).not.toHaveProperty("product_page_url");
+  });
+
+  it("rejects conflicting approved aliases instead of guessing", () => {
+    const conflictingRow = {
+      ...rejectedPreview.preview_rows[0],
+      job_id_value: "CS-101",
+      role_id: "CS-999",
+    };
+
+    expect(() => mapScraperStudioRows([conflictingRow], metadata)).toThrow(
       BrightDataIngestionError,
     );
-    expect(() => mapScraperStudioRows(rejectedPreview.preview_rows, metadata)).toThrow(
-      /missing both requisition fields job_id and job_id_value/,
+    expect(() => mapScraperStudioRows([conflictingRow], metadata)).toThrow(
+      /conflicting requisition values/,
+    );
+  });
+
+  it("does not infer an unknown label as a canonical field", () => {
+    const unknownDepartmentRow = { ...layoutBContractRows[0] } as Record<string, unknown>;
+    delete unknownDepartmentRow.department;
+    unknownDepartmentRow.business_unit = "Engineering";
+
+    expect(() => mapScraperStudioRows([unknownDepartmentRow], metadata)).toThrow(
+      /department/,
     );
   });
 });

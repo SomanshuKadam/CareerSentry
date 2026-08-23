@@ -21,6 +21,8 @@ One final API-level attempt deployed the fixture in the after-change state and p
 
 The proposal was rejected before save because it did not preserve CareerSentry's established six-field raw contract (`job_id_value`, `title`, `location`, `department`, `employment_type`, `company_job_url`). No post-approval run was made.
 
+A subsequent owner-authorized selector-only attempt retained the generated diff. It successfully changed the listing parser to `section.role-tile`, `h2 a`, `.role-tile__team`, and the `Based in` / `Role type` / `Requisition` labels, and its intermediate parser output contained the six required fields. However, the final `collect` code still mapped those values to `role_id`, `team`, `official_role_url`, and `product_page_url`. The preview therefore looked contract-compatible at the intermediate stage while the proposed saved output remained incompatible. The direct rejection request returned HTTP 400 without changing the pending state; the supported CLI `--reject` path then closed the same proposal as `rejected`. It was never approved or saved, and no post-approval run was made. The complete sanitized progress and diff summary are in [`layout-b-selector-heal-rejected.json`](./layout-b-selector-heal-rejected.json).
+
 ## What CareerSentry did wrong
 
 1. The first attempt treated CLI `--url` as input to the healing job. Bright Data's CLI reference says that flag is only woven into the `next_step` hint; it is not sent to the heal call.

@@ -1,0 +1,124 @@
+{
+  "evidence_type": "owned_layout_b_selector_only_heal_rejected",
+  "date": "2026-08-23",
+  "collector_id": "c_mt5mfwuv2910ltr23s",
+  "target_url": "https://career-sentry.vercel.app/demo-target/live",
+  "fixture_layout_during_attempt": "b",
+  "progress_envelope": {
+    "id": "ia_mt5qxt2i1u75dly5pp",
+    "step": "user_approval",
+    "status": "pending_answer",
+    "completed_steps": [
+      "planner",
+      "control_preview_runner",
+      "code_fixer",
+      "step_preview_runner",
+      "request_fulfillment_validator",
+      "step_advance",
+      "control_preview_runner",
+      "code_fixer",
+      "step_preview_runner",
+      "request_fulfillment_validator",
+      "css_selector_extractor",
+      "code_fixer",
+      "step_preview_runner",
+      "request_fulfillment_validator",
+      "css_selector_extractor",
+      "code_fixer",
+      "step_preview_runner",
+      "request_fulfillment_validator",
+      "css_selector_extractor",
+      "code_fixer",
+      "step_preview_runner",
+      "request_fulfillment_validator",
+      "step_advance"
+    ],
+    "success": true
+  },
+  "preview_result": {
+    "job_id_value": "CS-101",
+    "title": "Backend Engineer",
+    "department": "Engineering",
+    "location": "Bangalore, Karnataka, India",
+    "employment_type": "Hybrid",
+    "company_job_url": "https://career-sentry.vercel.app/demo-target/jobs/CS-101"
+  },
+  "preview_semantics": "representative_sample_only; not a full-run row-count assertion",
+  "diff_summary": {
+    "parser_change": {
+      "selectors": [
+        "section.role-tile",
+        "h2 a",
+        ".role-tile__team",
+        "role-tile__metadata",
+        "Based in",
+        "Role type",
+        "Requisition"
+      ],
+      "intermediate_fields": [
+        "job_id_value",
+        "title",
+        "location",
+        "department",
+        "employment_type",
+        "company_job_url"
+      ]
+    },
+    "final_collect_mapping": {
+      "role_id": "job.job_id_value",
+      "title": "job.title",
+      "team": "job.department",
+      "location": "job.location",
+      "employment_type": "job.employment_type",
+      "official_role_url": "new URL(job.company_job_url)",
+      "product_page_url": "new URL(input.url)"
+    },
+    "final_emitted_fields": [
+      "role_id",
+      "title",
+      "team",
+      "location",
+      "employment_type",
+      "official_role_url",
+      "product_page_url"
+    ],
+    "established_required_fields": [
+      "job_id_value",
+      "title",
+      "location",
+      "department",
+      "employment_type",
+      "company_job_url"
+    ],
+    "verdict": "parser selectors improved, but final collect mapping changed the established output contract"
+  },
+  "decision": {
+    "direct_resume_http_status": 400,
+    "direct_resume_transition": "none; progress remained pending_answer",
+    "cli_reject_status": "rejected",
+    "progress_after_rejection": "done",
+    "approval": "not_approved",
+    "saved": false,
+    "post_approval_verification": "not_run"
+  },
+  "view_url": "https://brightdata.com/cp/scrapers/c_mt5mfwuv2910ltr23s",
+  "restoration": {
+    "fixture_layout": "a",
+    "deployment_id": "dpl_8mrhMXAeJ8o6nJ8vwtpd6Z4WH7eQ",
+    "fixture_http_status": 200,
+    "layout_a_job_cards": 3,
+    "layout_b_role_tiles": 0,
+    "jobs_http_status": 200,
+    "persisted_revrag_roles_rendered": 13
+  },
+  "usage_ledger_for_this_attempt": {
+    "self_healing_requests": 1,
+    "collector_runs": 0,
+    "replacement_collectors": 0,
+    "rev_rag_runs": 0,
+    "postgresql_mutations": 0,
+    "credit_conversion": "unavailable; operation counts are authoritative"
+  },
+  "status": "layout_b_recovery_unresolved",
+  "sanitization": "CareerSentry-owned fictional data only; no credentials, personal data, or application routes."
+}

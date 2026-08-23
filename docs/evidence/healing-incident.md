@@ -28,6 +28,16 @@ The stable-URL collector was later tested with one owner-authorized direct AI Fl
 
 The follow-up is analyzed in the [Layout-B healing postmortem](./layout-b-healing-postmortem.md). In particular, the single preview row is sample output, not proof that the proposed scraper would enumerate only one role; the schema mismatch remains the concrete rejection reason.
 
+## Selector-only API follow-up — 2026-08-23
+
+The next owner-authorized attempt used the shorter selector-only prompt and retained the full sanitized progress envelope and diff summary in [`layout-b-selector-heal-rejected.json`](./layout-b-selector-heal-rejected.json).
+
+1. Layout B was deployed and verified read-only: three `role-tile` elements, zero `job-card` elements, and the three fictional requisitions were present.
+2. One Self-Healing request reached `pending_answer` / `user_approval`. The generated parser correctly switched to B selectors and extracted the six intermediate fields.
+3. The final `collect` mapping still emitted `role_id`, `team`, `official_role_url`, and `product_page_url`, so the proposal changed the established raw contract even though the preview showed the intermediate six fields. It was not safe to approve.
+4. The direct rejection call returned HTTP 400 without transitioning the job. Bright Data's supported CLI `--reject` path then closed the same proposal with `status=rejected`; no approval, save, or post-approval run occurred.
+5. Layout A was restored. The fixture returned three A cards and no B tiles, while `/jobs` still rendered the 13 persisted RevRag roles.
+
 ## Safety gates demonstrated
 
 - One stable Collector ID throughout.
@@ -40,4 +50,4 @@ The follow-up is analyzed in the [Layout-B healing postmortem](./layout-b-healin
 
 ## Current state
 
-The collector remains valid for layout A. Layout B is a documented unresolved `needs_review` incident because the prior saved repair still returned zero rows and the final API-level proposal was rejected before save. This is honest failure evidence, not a simulated success claim.
+The collector remains valid for layout A. Layout B is a documented unresolved `needs_review` incident because the prior saved repair still returned zero rows and both later proposals were rejected before save. This is honest failure evidence, not a simulated success claim.

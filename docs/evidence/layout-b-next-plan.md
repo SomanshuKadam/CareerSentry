@@ -1,8 +1,10 @@
 # Next Layout-B recovery plan
 
-Status: zero-credit preparation only; the next live Bright Data operation is not yet authorized.
+Status: bounded live attempt completed; Layout-B recovery remains unresolved and no further live Bright Data operation is authorized.
 
 The goal remains unchanged: repair collector `c_mt5mfwuv2910ltr23s` in place so the stable URL returns the same three fictional roles in layout B without changing CareerSentry's downstream contract.
+
+The owner-authorized attempt used this plan's selector-only prompt. Bright Data changed the B parser selectors, but its final collection mapping still emitted the incompatible legacy fields. The proposal was rejected before save, the fixture was restored to A, and no post-approval run occurred. See [`layout-b-selector-heal-rejected.json`](./layout-b-selector-heal-rejected.json).
 
 ## Preparation completed
 

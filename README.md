@@ -112,6 +112,19 @@ npm run db:migrate
 
 The evidence is intentionally honest: the RevRag history records the completed initial run, approval-gated same-ID cleanup, and verified recovery, while the layout A/B run is explicitly project-owned healing evidence. Neither surface contains application interactions or personal data.
 
+## Three-minute demo
+
+First show the production [Jobs](https://career-sentry.vercel.app/jobs) page with the persisted RevRag roles and the [Reliability](https://career-sentry.vercel.app/reliability) page. Then run these commands one at a time while narrating:
+
+```bash
+npm run demo:baseline
+npm run demo:failure
+npm run demo:heal
+npm run demo:verify
+```
+
+The commands separately show the authentic three-row baseline, zero-row layout-change incident, Codex-assisted proposal and human approval, and verified three-row recovery. They read checked-in sanitized evidence and perform no live deployment, Bright Data operation, collector mutation, RevRag run, or database write. This keeps the three-minute recording repeatable without deliberately breaking the repaired collector.
+
 ## Architecture
 
 ```text

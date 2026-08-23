@@ -9,6 +9,10 @@
     "lint": "next lint",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
+    "demo:baseline": "node scripts/demo-healing-replay.mjs baseline",
+    "demo:failure": "node scripts/demo-healing-replay.mjs failure",
+    "demo:heal": "node scripts/demo-healing-replay.mjs heal",
+    "demo:verify": "node scripts/demo-healing-replay.mjs verify",
     "healing:codex": "node scripts/codex-healing-proposal.mjs",
     "db:generate": "drizzle-kit generate --config=src/lib/persistence/drizzle.config.ts",
     "db:migrate": "drizzle-kit migrate --config=src/lib/persistence/drizzle.config.ts"

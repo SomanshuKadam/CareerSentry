@@ -263,7 +263,21 @@ if (!validateOnly) {
     if (!existsSync(isolatedOutput)) throw new Error("codex exec did not produce a proposal artifact");
     copyFileSync(isolatedOutput, output.absolute);
   } finally {
-    rmSync(isolatedDir, { recursive: true, force: true });
+    try {
+      // Windows can retain a short-lived handle after the Codex child exits.
+      // Retry cleanup, but do not mask a successfully written proposal if the
+      // sanitized temporary directory remains locked.
+      rmSync(isolatedDir, {
+        recursive: true,
+        force: true,
+        maxRetries: 5,
+        retryDelay: 200,
+      });
+    } catch (error) {
+      console.warn(
+        `Warning: could not remove sanitized temporary workspace ${isolatedDir}: ${error.message}`,
+      );
+    }
   }
 }
 

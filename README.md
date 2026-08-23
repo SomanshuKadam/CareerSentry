@@ -89,6 +89,7 @@ npm run db:migrate
 - [Recovered layout-A output](./docs/evidence/layout-a-recovered.json): three CareerSentry-owned fixture roles.
 - [Degraded layout-B output](./docs/evidence/layout-b-degraded.json): zero rows after the controlled fixture redesign.
 - [Rejected layout-B API-heal preview](./docs/evidence/layout-b-api-heal-rejected.json): one incompatible preview row rejected before save; no post-approval run.
+- [Layout-B healing postmortem](./docs/evidence/layout-b-healing-postmortem.md): separates the CLI-input mistake, preview-sample misinterpretation, invalid schema proposal, and remaining unknowns.
 - [Healing incident timeline](./docs/evidence/healing-incident.md): approval decisions, failed verification, same-Collector-ID recovery evidence, and the unresolved layout-B repair.
 
 The evidence is intentionally honest: the RevRag history records the completed initial run, approval-gated same-ID cleanup, and verified recovery, while the layout A/B run is explicitly project-owned healing evidence. Neither surface contains application interactions or personal data.

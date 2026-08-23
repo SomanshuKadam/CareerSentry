@@ -26,6 +26,8 @@ The stable-URL collector was later tested with one owner-authorized direct AI Fl
 3. The proposal was rejected before save. No post-approval run was made, and the Collector ID remained unchanged.
 4. The fixture was restored to layout A. The sanitized preview is retained in [`layout-b-api-heal-rejected.json`](./layout-b-api-heal-rejected.json).
 
+The follow-up is analyzed in the [Layout-B healing postmortem](./layout-b-healing-postmortem.md). In particular, the single preview row is sample output, not proof that the proposed scraper would enumerate only one role; the schema mismatch remains the concrete rejection reason.
+
 ## Safety gates demonstrated
 
 - One stable Collector ID throughout.

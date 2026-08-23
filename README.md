@@ -1,58 +1,154 @@
 # CareerSentry
 
-CareerSentry is a provenance-aware, self-healing career intelligence agent for the [Into the Scrape-Verse](https://www.wemakedevs.org/hackathons/scrape-verse) hackathon. It keeps official career paths, normalized job records, collector health, and bounded healing evidence visible in one workspace.
+CareerSentry is a self-healing career-data monitor built for the [Into the Scrape-Verse hackathon](https://www.wemakedevs.org/hackathons/scrape-verse). It collects public jobs with Bright Data Scraper Studio, validates every run, keeps the last healthy snapshot, and repairs a collector when a careers page changes.
 
-> Current state: collector `c_mt3ctgtj2rqnwsqm8p` was run against the public RevRag AI careers catalog. Its initial saved run returned 15 entries (10 valid active roles and 5 rejected error envelopes); an approval-gated cleanup was saved on the same Collector ID and verification returned 10 clean rows. A later, explicitly authorized protected run persisted a healthy 13-row snapshot in Neon PostgreSQL, and the production dashboard now renders that last-known-good snapshot. The separate CareerSentry-owned layout A/B lab now has verified same-Collector-ID recovery: layout B returned all three fictional roles after an approval-gated Bright Data repair, and CareerSentry normalized the confirmed schema aliases into its unchanged canonical contract.
+## Try it
 
-## What is implemented
+| Page | What it shows |
+|---|---|
+| [Home](https://career-sentry.vercel.app) | Product overview and current reliability state |
+| [Jobs](https://career-sentry.vercel.app/jobs) | 13 real RevRag AI roles persisted in Neon PostgreSQL |
+| [Reliability](https://career-sentry.vercel.app/reliability) | Collector health, provenance, incidents, and recovery proof |
+| [Healing fixture](https://career-sentry.vercel.app/demo-target/live) | Project-owned fictional careers page used for the controlled A/B demo |
 
-- Responsive, content-first Next.js product with four public destinations: Home, real RevRag Jobs, Reliability evidence, and the clearly labeled project-owned Healing demo.
-- Retired dashboard routes redirect to Reliability, so old shared links do not become 404 pages.
-- A current persisted RevRag AI snapshot with 13 healthy roles, plus historical 10-role cleanup evidence; stable `jobId` values are derived only from unique same-origin `/careers/{slug}` URLs.
-- Sanitized public evidence under [`docs/evidence/revrag-verified.json`](./docs/evidence/revrag-verified.json); no application URLs, resumes, candidate fields, credentials, or personal data.
-- A clear source registry separating saved RevRag run/recovery evidence from the CareerSentry-owned healing lab.
-- Strict Zod `JobRecord` contract, location normalization, URL/job-ID deduplication, and lifecycle helpers.
-- Collector health checks for count drift, required fields, duplicates, pagination, schema, details, and application actions.
-- Server-side Bright Data client code with bounded input validation and an authenticated fixed-target route that fails closed unless durable storage is configured.
-- Provider-neutral PostgreSQL/Drizzle schema and migration for collector runs, canonical jobs, and sanitized health incidents. Healthy runs commit atomically; degraded runs never replace last-known-good jobs.
-- Runtime read model that prefers the persisted last-known-good snapshot and otherwise labels the bundled evidence fallback explicitly.
-- Project-owned public layout A/B catalog plus stable server-rendered `/demo-target/live` input, controlled only by `CAREERSENTRY_FIXTURE_LAYOUT`.
-- Approval-gated same-collector RevRag output cleanup is verified. The separate fictional page-change experiment preserves its earlier failures, then demonstrates a Codex-assisted, approval-gated Bright Data repair on `c_mt5mfwuv2910ltr23s`: the post-approval Layout-B run returned exactly `CS-101`–`CS-103`, and the schema adapter normalized all three rows without changing PostgreSQL or RevRag data.
-- Offline local Codex-assisted healing is implemented: sanitized Bright Data evidence can be sent to `codex exec` for a structured selector/schema proposal, then checked by a no-mutation approval gate. This does not call the OpenAI API, Bright Data, or PostgreSQL.
-- Read-only target research under `docs/`; researched targets are not represented as collected jobs in the UI.
+## What problem does it solve?
 
-## Local setup
+A job scraper can return HTTP 200 and still silently miss every job after a website redesign. CareerSentry treats extraction as a monitored data pipeline:
+
+```text
+public careers page
+        ↓
+Bright Data custom collector
+        ↓
+schema normalization + health checks
+        ↓
+healthy → save snapshot → show jobs
+broken  → preserve old snapshot → open healing incident
+                                      ↓
+                            Codex repair proposal
+                                      ↓
+                         Bright Data preview + review
+                                      ↓
+                         human approval → verify again
+```
+
+The database and UI continue using the same canonical job schema even when Bright Data proposes different output labels.
+
+## What is verified?
+
+### Real RevRag collection
+
+- Custom Scraper Studio collector: `c_mt3ctgtj2rqnwsqm8p`
+- Source: RevRag AI's public first-party careers catalog
+- Initial run: 10 valid roles plus 5 rejected error envelopes
+- Same-collector cleanup: 10 clean rows after approval
+- Protected production run: 13 healthy rows persisted in Neon PostgreSQL
+- Current Jobs page: the persisted 13-role last-known-good snapshot
+
+### Controlled website-change recovery
+
+- Project-owned fixture collector: `c_mt5mfwuv2910ltr23s`
+- Layout A: 3 rows
+- Layout B with unchanged A selectors: 0 real rows
+- Local Codex: generated a selector/schema repair from the fresh failure evidence
+- Bright Data Self-Healing: previewed the repair and stopped for approval
+- Deterministic review: accepted only the expected B selectors and allowlisted schema aliases
+- Post-approval run: 3 rows on the same Collector ID (`CS-101`, `CS-102`, `CS-103`)
+- PostgreSQL and RevRag data: unchanged during the fixture experiment
+
+Recovery is claimed only after a full post-approval collector run—not from a preview.
+
+## Real live-healing demo commands
+
+These are the actual commands used in the recorded demonstration. They call Vercel, local Codex CLI, and Bright Data; they are not hardcoded output or an evidence replay.
+
+> The demo is stateful and spends Bright Data credits. The completed recording left the healed collector configured for Layout B and restored the public fixture to safe Layout A. Do not rerun this sequence without deliberately preparing the collector for Layout A again.
+
+From PowerShell in the repository root:
+
+```powershell
+# 1. Run the real Layout-A collector and require three rows
+npm.cmd run demo:live:baseline
+
+# 2. Deploy the changed Layout-B website
+npm.cmd run demo:live:layout-b
+
+# 3. Run the unchanged collector, require zero rows, and save fresh failure evidence
+npm.cmd run demo:live:failure
+
+# 4. Invoke real local codex exec to propose a repair
+npm.cmd run demo:live:codex
+
+# 5. Send the Codex prompt to Bright Data Self-Healing and stop at approval
+npm.cmd run demo:live:heal
+
+# 6. Validate the real diff, selectors, schema, and preview
+npm.cmd run demo:live:review
+
+# 7. Approve and save the pending repair
+npm.cmd run demo:live:approve
+
+# 8. Run the same collector and require all three valid B rows
+npm.cmd run demo:live:verify
+
+# 9. Restore the public fixture to Layout A
+npm.cmd run demo:live:restore
+```
+
+Bright Data's AI step can take several minutes. The submitted three-minute video can use a visible jump cut over polling, while keeping the real command and final output on screen. If a stage fails, do not continue to approval; restore Layout A if Layout B is already public.
+
+## How Codex is used
+
+CareerSentry uses the user's authenticated local Codex CLI instead of an OpenAI API integration:
+
+```powershell
+npm.cmd run healing:codex -- --input docs/evidence/layout-b-codex-input.json
+```
+
+The workflow:
+
+1. Builds a sanitized bundle containing the failure, expected contract, and changed markup.
+2. Runs `codex exec` in an isolated, read-only temporary workspace.
+3. Requires structured JSON matching the checked-in proposal schema.
+4. Rejects unsafe or incompatible mappings locally.
+5. Leaves Bright Data mutation and approval to separate human-controlled commands.
+
+Generated proposals and raw operation responses stay under ignored `artifacts/` paths.
+
+## Schema adapter
+
+CareerSentry accepts only these reviewed aliases:
+
+| Bright Data field | CareerSentry field |
+|---|---|
+| `role_id` | `job_id_value` |
+| `team` | `department` |
+| `official_role_url` | `company_job_url` |
+
+Known Bright Data metadata such as `product_page_url` and `input` is ignored. Unknown fields, conflicting aliases, incomplete rows, duplicate IDs, and invalid URLs are rejected.
+
+## Run locally
 
 Requirements: Node.js 18 or newer.
 
-```bash
+```powershell
 npm install
 npm run dev
 ```
 
 Open `http://localhost:3000`.
 
-Verification:
+Verify the project:
 
-```bash
+```powershell
 npm test
 npm run typecheck
 npm run build
 ```
 
-### Local Codex-assisted healing
+## Configuration
 
-The local proposal workflow uses your Codex CLI credits without connecting the deployed app to an OpenAI API. It reads a sanitized evidence bundle, asks `codex exec` for a structured repair proposal in an isolated read-only workspace, and rejects proposals that bypass the allowlisted schema adapter or human approval:
-
-```bash
-npm run healing:codex -- --input docs/evidence/layout-b-codex-input.json
-```
-
-The generated proposal is written under ignored `artifacts/codex-healing/`. It does not call Bright Data, approve/save a collector, run a collector, or write PostgreSQL. See [`docs/evidence/codex-local-healing.md`](./docs/evidence/codex-local-healing.md) for the evidence format and the human-controlled next step.
-
-## Bright Data configuration
-
-Copy `.env.example` to `.env.local` and fill it locally only after a target is approved and a custom Scraper Studio collector exists:
+Copy `.env.example` to `.env.local` only when operating the protected collection route:
 
 ```env
 BRIGHT_DATA_API_TOKEN=...
@@ -62,139 +158,37 @@ BRIGHT_DATA_DISCOVERY_COLLECTOR_ID=c_...
 BRIGHT_DATA_PDP_COLLECTOR_ID=c_...
 ```
 
-Never prefix the token with `NEXT_PUBLIC_`, commit it, paste it into screenshots, or expose it to client components. The repository contains no live token. Collector IDs are non-secret provenance identifiers and may appear in sanitized evidence.
+Never prefix a secret with `NEXT_PUBLIC_`, commit it, paste it into chat, or show it in a recording. Dashboard page loads never trigger Bright Data. The protected RevRag route fails closed unless its server-only run key, Bright Data token, and database configuration are available.
 
-The intended cost-efficient collector flow is:
+Database migration:
 
-```text
-official catalog -> Discovery collector -> normalized snapshot
-                                      -> PDP only for new/changed job URLs
-```
-
-The application client enforces at most ten inputs in one run. Dashboard page loads never execute collection: they read a stored last-known-good snapshot when PostgreSQL is configured or use the labeled saved-evidence fallback.
-
-### Protected RevRag collection route
-
-`POST /api/admin/collect/revrag` is disabled by default. It runs only when the server-only `CAREERSENTRY_RUN_KEY`, `BRIGHT_DATA_API_TOKEN`, and `DATABASE_URL` are configured. The route uses a timing-safe run-key comparison, ignores request-body target fields, and always fixes the one input to `https://www.revrag.ai/careers` and the collector to `c_mt3ctgtj2rqnwsqm8p`. Missing storage is checked before the Bright Data trigger, preventing an unstorable credit-consuming run.
-
-Use a placeholder key in local documentation; never put a real key or token in source control:
-
-```bash
-curl -X POST http://localhost:3000/api/admin/collect/revrag \
-  -H "x-careersentry-run-key: replace_with_a_long_server_only_run_key" \
-  -H "Content-Type: application/json" \
-  --data '{}'
-```
-
-Responses are `Cache-Control: no-store`; unauthenticated or unavailable configuration fails safely. A healthy snapshot writes its run and canonical jobs in one transaction before success is returned. A degraded/rejected result stores a sanitized run and incident but no partial canonical jobs.
-
-Initialize a configured database with the checked-in migration:
-
-```bash
+```powershell
 npm run db:migrate
 ```
 
 ## Evidence
 
-- [Saved RevRag run/recovery evidence](./docs/evidence/revrag-verified.json): an initial degraded 15-entry run (10 valid + 5 rejected envelopes) and a same-Collector-ID verified 10-row recovery, reduced to same-origin role fields.
-- [Recovered layout-A output](./docs/evidence/layout-a-recovered.json): three CareerSentry-owned fixture roles.
-- [Degraded layout-B output](./docs/evidence/layout-b-degraded.json): zero rows after the controlled fixture redesign.
-- [Rejected layout-B API-heal preview](./docs/evidence/layout-b-api-heal-rejected.json): one incompatible preview row rejected before save; no post-approval run.
-- [Rejected selector-only layout-B heal](./docs/evidence/layout-b-selector-heal-rejected.json): the parser switched to B selectors, but the final collection mapping still changed the output contract; rejected before save and no post-approval run.
-- [Verified Codex-assisted layout-B recovery](./docs/evidence/layout-b-codex-assisted-success.json): inspected diff, explicit approval/save, one same-ID post-approval run with three rows, adapter validation, and restoration to layout A.
-- [Local Codex healing input](./docs/evidence/layout-b-codex-input.json): sanitized replay bundle containing the Layout-B failure, selector facts, raw aliases, and no-mutation constraints.
-- [Local Codex healing workflow](./docs/evidence/codex-local-healing.md): runbook for generating and reviewing a proposal without OpenAI API or Bright Data calls.
-- [Codex proposal JSON Schema](./docs/evidence/codex-healing-proposal.schema.json): machine-readable output contract for the local CLI step.
-- [Schema-drift adapter](./docs/evidence/schema-drift-adapter.md): allowlisted Bright Data aliases are normalized into the unchanged CareerSentry database contract; unknown or conflicting mappings are rejected.
-- [Layout-B healing postmortem](./docs/evidence/layout-b-healing-postmortem.md): separates the CLI-input mistake, preview-sample misinterpretation, invalid schema proposal, and remaining unknowns.
-- [Layout-B recovery plan and outcome](./docs/evidence/layout-b-next-plan.md): the bounded plan, prior rejected attempt, adapter-aware acceptance gate, and completed verification result.
-- [Healing incident timeline](./docs/evidence/healing-incident.md): approval decisions, failed attempts, same-Collector-ID recovery evidence, and the final verified layout-B repair.
+Start with these files:
 
-The evidence is intentionally honest: the RevRag history records the completed initial run, approval-gated same-ID cleanup, and verified recovery, while the layout A/B run is explicitly project-owned healing evidence. Neither surface contains application interactions or personal data.
+- [RevRag verified collection](./docs/evidence/revrag-verified.json)
+- [Verified Codex-assisted Layout-B recovery](./docs/evidence/layout-b-codex-assisted-success.json)
+- [Healing incident timeline](./docs/evidence/healing-incident.md)
+- [Layout-B healing postmortem](./docs/evidence/layout-b-healing-postmortem.md)
+- [Local Codex workflow](./docs/evidence/codex-local-healing.md)
+- [Schema-drift adapter](./docs/evidence/schema-drift-adapter.md)
 
-## Real live-healing demo
+Historical failed and rejected attempts remain in `docs/evidence/`; they are part of the reliability story, not hidden test noise.
 
-The demo is prepared as a one-shot live sequence. First show the production [Jobs](https://career-sentry.vercel.app/jobs) page with the persisted RevRag roles and the [Reliability](https://career-sentry.vercel.app/reliability) page. Then run these commands individually from the repository root:
+## Safety boundaries
 
-```bash
-npm.cmd run demo:live:baseline
-npm.cmd run demo:live:layout-b
-npm.cmd run demo:live:failure
-npm.cmd run demo:live:codex
-npm.cmd run demo:live:heal
-npm.cmd run demo:live:review
-npm.cmd run demo:live:approve
-npm.cmd run demo:live:verify
-npm.cmd run demo:live:restore
-```
-
-| Command | Real operation and required result |
-|---|---|
-| `demo:live:baseline` | Verifies Layout A is public, runs the Bright Data collector, and requires three live rows. |
-| `demo:live:layout-b` | Deploys the real production fixture with materially different Layout-B markup. |
-| `demo:live:failure` | Verifies three B tiles still exist, runs the unchanged collector, requires zero rows, and builds fresh sanitized Codex input from that failure. |
-| `demo:live:codex` | Invokes local `codex exec` and writes a new structured repair proposal; it does not mutate Bright Data. |
-| `demo:live:heal` | Sends the Codex proposal to the real Bright Data Self-Healing API with the stable URL in `custom_input`, then stops at human approval. |
-| `demo:live:review` | Checks the actual retained diff, preview fields, B selectors, and adapter contract. It rejects incompatible proposals. |
-| `demo:live:approve` | Approves and saves the pending Bright Data repair on the same Collector ID. |
-| `demo:live:verify` | Runs the repaired collector and requires the three expected, complete, same-origin rows. |
-| `demo:live:restore` | Restores the public fixture to Layout A after recording. |
-
-These are real operations, not an evidence replay. They run the Bright Data collector on Layout A, deploy Layout B, prove the same collector returns zero rows, generate a fresh sanitized failure bundle, invoke local `codex exec`, send its bounded prompt to Bright Data with the stable URL as `custom_input`, stop for deterministic and human review, approve/save the proposed repair, run the same Collector ID again, require all three fixture IDs, and restore Layout A. Generated artifacts remain ignored under `artifacts/`.
-
-Bright Data AI processing can take several minutes. For a three-minute submitted video, keep the real terminal output but use a visible jump cut over polling time. Never rehearse the live sequence casually: it spends Bright Data credits and changes both production fixture and collector state. If any stage fails, stop rather than continuing to approval or verification; if Layout B is already public, still run `demo:live:restore`. On macOS/Linux, use `npm` in place of `npm.cmd`.
-
-## Architecture
-
-```text
-official careers catalog
-          |
-          v
-Discovery collector evidence
-          |
-          +---- new/changed URLs ----> incremental PDP collector (future)
-          |
-          v
-                    Zod + normalizer
-                          |
-             +------------+-------------+
-             v                          v
-        persistence                 health engine
-             |                          |
-             v                          v
-         dashboard              healing incident/evidence
-                                          |
-                                          v
-                               local Codex proposal + approval gate
-                                          |
-                                          v
-                               allowlisted schema adapter
-```
-
-The project-owned `/demo-target` route supplies inspectable query-based evidence. `/demo-target/live` is the stable scraper input: its materially different A/B markup is selected server-side through `CAREERSENTRY_FIXTURE_LAYOUT`, defaults to A, and cannot be overridden by query parameters. Neither route is an external employer catalog.
-
-## Target policy
-
-Public visibility is not treated as permission. Before any future real collection, the target must pass:
-
-- official corporate-to-careers provenance;
-- public/no-login access;
-- current Terms, robots, and site-policy review;
-- Bright Data pre-built scraper overlap check;
-- one-input credit and budget gate; and
-- schema, provenance, and personal-data exclusion checks.
-
-The current RevRag records reflect a completed run and approval-gated same-ID cleanup from this workspace. The initial degraded result and recovered 10-row verification remain retained as historical saved evidence; they must not be interpreted as permission to rerun collection. Neon PostgreSQL is configured and migrated in Production, and one explicitly authorized protected run is persisted as a healthy 13-row snapshot. The dashboard prefers that persisted last-known-good snapshot and exposes only sanitized run/incident metadata. Other target research remains policy evidence only and is intentionally absent from the product data.
+- Public job-posting fields only
+- No logins, applications, resumes, candidate data, or form submission
+- No public credit-burning endpoint
+- Healthy snapshots replace production data atomically; degraded runs never do
+- Human approval before saving a Bright Data repair
+- Full same-collector verification before declaring recovery
+- Bright Data hard ceiling: 5,000 credits; exact conversion is unavailable
 
 ## AI usage disclosure
 
-Codex and user-authorized subagents are used for research, implementation, review, and tests. Bright Data Scraper Studio was used for the RevRag collector run and approval-gated same-ID cleanup, plus the project-owned Layout-B repair. The local Codex step produced an advisory proposal only; the owner retained approval, and CareerSentry declared recovery only after the saved same-ID collector returned three adapter-valid rows.
-
-## Safety
-
-- Public job-posting fields only.
-- No logins, candidate portals, form submissions, application automation, or personal data.
-- Application links and form fields are excluded from the sanitized evidence.
-- Scraped content is untrusted and must be validated before rendering or reaching an LLM.
-- Tokens, `.env` files, resumes, and private job-search results are excluded from the repository.
-- Dashboard page loads never trigger Bright Data. Collection remains limited to the protected server-only endpoint and requires the configured run key, token, and database.
+Codex assisted with research, implementation, tests, documentation, and the structured healing proposal. Bright Data Scraper Studio performed collection and Self-Healing. CareerSentry's deterministic gates and the project owner controlled approval. No AI model writes directly to PostgreSQL.

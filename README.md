@@ -17,7 +17,7 @@ CareerSentry is a provenance-aware, self-healing career intelligence agent for t
 - Provider-neutral PostgreSQL/Drizzle schema and migration for collector runs, canonical jobs, and sanitized health incidents. Healthy runs commit atomically; degraded runs never replace last-known-good jobs.
 - Runtime read model that prefers the persisted last-known-good snapshot and otherwise labels the bundled evidence fallback explicitly.
 - Project-owned public layout A/B catalog plus stable server-rendered `/demo-target/live` input, controlled only by `CAREERSENTRY_FIXTURE_LAYOUT`.
-- Approval-gated same-collector RevRag output cleanup is verified. The separate fictional page-change repair remains visibly rejected after saved-template verification failed.
+- Approval-gated same-collector RevRag output cleanup is verified. The separate fictional page-change experiment shows a three-row baseline, a zero-row failure, a valid repair preview, and a post-approval zero-row verification; layout-B recovery remains unresolved and is presented honestly as such.
 - Read-only target research under `docs/`; researched targets are not represented as collected jobs in the UI.
 
 ## Local setup

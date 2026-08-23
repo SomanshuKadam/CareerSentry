@@ -17,7 +17,7 @@ CareerSentry is a provenance-aware, self-healing career intelligence agent for t
 - Provider-neutral PostgreSQL/Drizzle schema and migration for collector runs, canonical jobs, and sanitized health incidents. Healthy runs commit atomically; degraded runs never replace last-known-good jobs.
 - Runtime read model that prefers the persisted last-known-good snapshot and otherwise labels the bundled evidence fallback explicitly.
 - Project-owned public layout A/B catalog plus stable server-rendered `/demo-target/live` input, controlled only by `CAREERSENTRY_FIXTURE_LAYOUT`.
-- Approval-gated same-collector RevRag output cleanup is verified. The separate fictional page-change experiment shows a three-row baseline, a zero-row failure, a valid repair preview, and a post-approval zero-row verification; layout-B recovery remains unresolved and is presented honestly as such.
+- Approval-gated same-collector RevRag output cleanup is verified. The separate fictional page-change experiment shows a three-row baseline, a zero-row failure, a valid repair preview, and a post-approval zero-row verification. A later API-level heal supplied the stable URL explicitly but produced one incompatible preview row and was rejected before save; layout-B recovery remains unresolved and is presented honestly as such.
 - Read-only target research under `docs/`; researched targets are not represented as collected jobs in the UI.
 
 ## Local setup
@@ -88,6 +88,7 @@ npm run db:migrate
 - [Saved RevRag run/recovery evidence](./docs/evidence/revrag-verified.json): an initial degraded 15-entry run (10 valid + 5 rejected envelopes) and a same-Collector-ID verified 10-row recovery, reduced to same-origin role fields.
 - [Recovered layout-A output](./docs/evidence/layout-a-recovered.json): three CareerSentry-owned fixture roles.
 - [Degraded layout-B output](./docs/evidence/layout-b-degraded.json): zero rows after the controlled fixture redesign.
+- [Rejected layout-B API-heal preview](./docs/evidence/layout-b-api-heal-rejected.json): one incompatible preview row rejected before save; no post-approval run.
 - [Healing incident timeline](./docs/evidence/healing-incident.md): approval decisions, failed verification, same-Collector-ID recovery evidence, and the unresolved layout-B repair.
 
 The evidence is intentionally honest: the RevRag history records the completed initial run, approval-gated same-ID cleanup, and verified recovery, while the layout A/B run is explicitly project-owned healing evidence. Neither surface contains application interactions or personal data.

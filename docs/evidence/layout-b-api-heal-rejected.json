@@ -1,0 +1,26 @@
+{
+  "evidence_type": "owned_layout_b_heal_preview_rejected",
+  "collector_id": "c_mt5mfwuv2910ltr23s",
+  "target_url": "https://career-sentry.vercel.app/demo-target/live",
+  "fixture_layout": "b",
+  "healing_api_input": "explicit stable-URL custom_input",
+  "status": "rejected_before_save",
+  "preview_row_count": 1,
+  "preview_rows": [
+    {
+      "role_id": "CS-101",
+      "title": "Backend Engineer",
+      "team": "Engineering",
+      "location": "Bangalore, Karnataka, India",
+      "employment_type": "Hybrid",
+      "official_role_url": "https://career-sentry.vercel.app/demo-target/jobs/CS-101",
+      "product_page_url": "https://career-sentry.vercel.app/demo-target/jobs/CS-101"
+    }
+  ],
+  "acceptance_result": {
+    "three_rows": false,
+    "existing_six_field_contract": false,
+    "post_approval_verification": "not_run"
+  },
+  "sanitization": "CareerSentry-owned fictional data only; no credentials, personal data, or application routes."
+}

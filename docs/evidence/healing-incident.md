@@ -17,6 +17,15 @@ This evidence contains only CareerSentry-owned fixture job data. It contains no 
 7. Running the same collector against layout B returned zero rows. The three-to-zero count drop created a degraded incident. See `layout-b-degraded.json`.
 8. A selector-specific layout-B heal preserved the layout-A control preview, but Scraper Studio reported `status=failed` during approval and explicitly left the collector unchanged. No further live heal was attempted.
 
+## Stable-URL API follow-up — 2026-08-23
+
+The stable-URL collector was later tested with one owner-authorized direct AI Flow Self-Healing request. The fixture was deployed in layout B, and the stable URL was passed explicitly as `custom_input` so the request did not rely on the CLI's `--url` hint.
+
+1. Collector `c_mt5mfwuv2910ltr23s` reached `pending_answer` / `user_approval`.
+2. The preview contained one row rather than three and changed the established raw contract to `role_id`, `team`, and `official_role_url` instead of the required six fields.
+3. The proposal was rejected before save. No post-approval run was made, and the Collector ID remained unchanged.
+4. The fixture was restored to layout A. The sanitized preview is retained in [`layout-b-api-heal-rejected.json`](./layout-b-api-heal-rejected.json).
+
 ## Safety gates demonstrated
 
 - One stable Collector ID throughout.
@@ -29,4 +38,4 @@ This evidence contains only CareerSentry-owned fixture job data. It contains no 
 
 ## Current state
 
-The collector remains valid for layout A. Layout B is a documented unresolved `needs_review` incident because the proposed repair failed before save. This is honest failure evidence, not a simulated success claim.
+The collector remains valid for layout A. Layout B is a documented unresolved `needs_review` incident because the prior saved repair still returned zero rows and the final API-level proposal was rejected before save. This is honest failure evidence, not a simulated success claim.

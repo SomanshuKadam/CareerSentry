@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CareerSentry local Codex healing proposal",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "proposalVersion",
+    "evidenceType",
+    "status",
+    "collectorId",
+    "targetUrl",
+    "repairScope",
+    "diagnosis",
+    "overallConfidence",
+    "brightDataPrompt",
+    "selectorChanges",
+    "schemaMappings",
+    "preservesCanonicalContract",
+    "fullRunVerificationRequired",
+    "verificationChecks",
+    "limitations",
+    "executionPolicy"
+  ],
+  "properties": {
+    "proposalVersion": { "type": "string", "enum": ["1"] },
+    "evidenceType": { "type": "string", "enum": ["codex_healing_proposal"] },
+    "status": { "type": "string", "enum": ["proposal"] },
+    "collectorId": { "type": "string", "pattern": "^c_[a-z0-9]+$" },
+    "targetUrl": { "type": "string", "pattern": "^https://" },
+    "repairScope": {
+      "type": "string",
+      "enum": ["selector_only", "schema_mapping_only", "selector_and_schema", "unknown"]
+    },
+    "diagnosis": { "type": "string", "minLength": 1, "maxLength": 2000 },
+    "overallConfidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "brightDataPrompt": { "type": "string", "minLength": 1, "maxLength": 1000 },
+    "selectorChanges": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["area", "before", "after", "reason"],
+        "properties": {
+          "area": { "type": "string", "minLength": 1, "maxLength": 200 },
+          "before": {
+            "anyOf": [
+              { "type": "string", "maxLength": 300 },
+              { "type": "null" }
+            ]
+          },
+          "after": { "type": "string", "minLength": 1, "maxLength": 300 },
+          "reason": { "type": "string", "minLength": 1, "maxLength": 500 }
+        }
+      }
+    },
+    "schemaMappings": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["sourceField", "targetField", "confidence", "decision", "reason", "evidence"],
+        "properties": {
+          "sourceField": { "type": "string", "minLength": 1, "maxLength": 100 },
+          "targetField": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": ["job_id_value", "title", "location", "department", "employment_type", "company_job_url"]
+              },
+              { "type": "null" }
+            ]
+          },
+          "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+          "decision": { "type": "string", "enum": ["auto", "review", "ignore"] },
+          "reason": { "type": "string", "minLength": 1, "maxLength": 500 },
+          "evidence": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 10,
+            "items": { "type": "string", "minLength": 1, "maxLength": 300 }
+          }
+        }
+      }
+    },
+    "preservesCanonicalContract": { "type": "boolean", "enum": [true] },
+    "fullRunVerificationRequired": { "type": "boolean", "enum": [true] },
+    "verificationChecks": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 20,
+      "items": { "type": "string", "minLength": 1, "maxLength": 500 }
+    },
+    "limitations": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 20,
+      "items": { "type": "string", "minLength": 1, "maxLength": 500 }
+    },
+    "executionPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["localOnly", "brightDataMutation", "databaseMutation", "requiresHumanApproval"],
+      "properties": {
+        "localOnly": { "type": "boolean", "enum": [true] },
+        "brightDataMutation": { "type": "boolean", "enum": [false] },
+        "databaseMutation": { "type": "boolean", "enum": [false] },
+        "requiresHumanApproval": { "type": "boolean", "enum": [true] }
+      }
+    }
+  }
+}

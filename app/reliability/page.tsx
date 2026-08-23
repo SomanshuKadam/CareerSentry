@@ -61,18 +61,18 @@ export default async function ReliabilityPage() {
             <p className="eyebrow">Separate fictional test</p>
             <h2>What happens when a careers page changes?</h2>
           </div>
-          <span className="status-badge status-warning">Demo only</span>
+          <span className="status-badge status-success">Recovery verified</span>
         </div>
         <p className="section-copy">The same three fictional roles are rendered with a different HTML structure. The old scraper returns no rows, which gives CareerSentry a failure to detect and Bright Data a repair to propose.</p>
         <div className="lab-result-grid">
           <article><span>Before the page change</span><strong>3 rows</strong><p>The original structure is readable by the collector.</p></article>
           <article><span>After the page change</span><strong>0 rows</strong><p>The roles remain, but the old selectors no longer find them.</p></article>
-          <article><span>Recovery status</span><strong>Not complete</strong><p>The previous approval failed, so we do not claim that this repair succeeded.</p></article>
+          <article><span>Recovery status</span><strong>3 rows restored</strong><p>An inspected same-ID repair returned all three roles after approval, and the schema adapter normalized every row.</p></article>
         </div>
         <div className="inline-actions"><Link className="primary-link" href="/demo-target/live">Open the fictional test page</Link><span>It contains no employer or applicant data.</span></div>
         <details className="evidence-details">
           <summary>Technical evidence</summary>
-          <p>Owned test Collector ID: <code>{healingLabCollectorId}</code>. A layout change is intentionally simulated on the stable test URL; this experiment is separate from RevRag.</p>
+          <p>Owned test Collector ID: <code>{healingLabCollectorId}</code>. A layout change is intentionally simulated on the stable test URL; one post-approval Layout-B run verified three adapter-valid rows. This experiment is separate from RevRag.</p>
         </details>
       </section>
 

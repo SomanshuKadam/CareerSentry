@@ -103,6 +103,18 @@ const REVIEW_RULES: readonly MappingRule[] = [
 
 const IGNORED_METADATA_FIELDS = new Set(["product_page_url", "input"]);
 
+export function isKnownAutomaticSchemaMapping(
+  sourceField: string,
+  targetField: CanonicalScraperField,
+): boolean {
+  const normalizedSourceField = normalizeFieldName(sourceField);
+  return AUTO_RULES.some(
+    (rule) =>
+      rule.targetField === targetField &&
+      rule.aliases.some((alias) => normalizeFieldName(alias) === normalizedSourceField),
+  );
+}
+
 function normalizeFieldName(value: string): string {
   return value.trim().toLocaleLowerCase().replace(/[^a-z0-9]/g, "");
 }

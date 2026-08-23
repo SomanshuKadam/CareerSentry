@@ -48,8 +48,20 @@ The next owner-authorized attempt used the shorter selector-only prompt and reta
 - Empty output after a non-empty baseline is treated as degraded, never as “no jobs.”
 - The last reported Bright Data ledger remained $52.00 balance, $0.00 pending charge, $0.00 zone cost, and 0 B on CLI zones. The platform did not expose credit conversion, so run counts are retained in the canonical plan.
 
+## Codex-assisted adapter-aware recovery — 2026-08-23
+
+One separately authorized follow-up used the sanitized local Codex proposal and the allowlisted schema adapter rather than rejecting Bright Data's known aliases outright.
+
+1. Layout B was deployed and verified with three `role-tile` elements and no `job-card` elements.
+2. One direct Self-Healing request supplied the stable URL as `custom_input` and reached `pending_answer` / `user_approval`.
+3. The retained diff iterated every B tile and emitted the already allowlisted Bright Data schema. The two preview rows were treated as samples, not a row-count claim.
+4. The owner approved and saved the inspected diff. One post-approval run on `c_mt5mfwuv2910ltr23s` returned exactly `CS-101`, `CS-102`, and `CS-103`.
+5. CareerSentry normalized all three rows into its six canonical fields with no validation errors. Layout A was then restored, and the separate 13-role RevRag snapshot remained unchanged.
+
+The complete sanitized result is in [`layout-b-codex-assisted-success.json`](./layout-b-codex-assisted-success.json). It also records a fixture evidence issue: the listing's `Role type` and detail page's `Work arrangement` are different source concepts and must not be presented as identical values.
+
 ## Current state
 
-The collector remains valid for layout A. Layout B is a documented unresolved `needs_review` incident because the prior saved repair still returned zero rows and both later proposals were rejected before save. This is honest failure evidence, not a simulated success claim.
+The same stable collector is now verified for the controlled Layout-B page change: the saved repair returned three adapter-valid rows in the required post-approval run. The fixture is publicly restored to layout A, while the earlier zero-row and rejected-proposal records remain visible as historical failure evidence.
 
-CareerSentry subsequently added a strict allowlisted adapter for the observed Bright Data schema aliases. That adapter preserves the database contract while permitting a future full-run validation of an explicitly confirmed Bright Data schema change; it does not alter the unresolved status of this incident.
+No RevRag collection or PostgreSQL mutation occurred during this experiment.

@@ -44,7 +44,7 @@ export type CollectorStat = {
 };
 
 export const revragCollectorId = "c_mt3ctgtj2rqnwsqm8p";
-export const healingLabCollectorId = "c_mt1wzptjco00s7w0p";
+export const healingLabCollectorId = "c_mt5mfwuv2910ltr23s";
 export const revragCatalogUrl = "https://www.revrag.ai/careers";
 export const savedRecoveryLabel = "Saved verification / 10 clean rows";
 
@@ -195,11 +195,11 @@ export const demoCompanies: DemoCompany[] = [
     catalogUrl: "https://career-sentry.vercel.app/demo-target?layout=a",
     provenance: ["career-sentry.vercel.app", "/demo-target", "layout A / layout B"],
     collectorId: healingLabCollectorId,
-    status: "needs_review",
-    lastChecked: "Evidence · 21 Aug 2026",
+    status: "healthy",
+    lastChecked: "Verified · 23 Aug 2026",
     jobs: 3,
     coverage: 100,
-    note: "CareerSentry-owned fixture evidence only · layout B remains unresolved",
+    note: "CareerSentry-owned fixture · same-ID layout B recovery verified",
   },
 ];
 
@@ -224,11 +224,11 @@ export const demoCollectors: CollectorStat[] = [
     name: "Owned layout A/B healing lab",
     company: "CareerSentry Healing Lab",
     kind: "Discovery",
-    status: "needs_review",
-    lastRun: "Evidence · 21 Aug 2026",
-    rowCount: 0,
-    previousRowCount: 3,
-    fieldCoverage: 0,
+    status: "healthy",
+    lastRun: "Verified · 23 Aug 2026",
+    rowCount: 3,
+    previousRowCount: 0,
+    fieldCoverage: 100,
     duplicateRate: 0,
     invalidLinks: 0,
     duration: "Evidence only",
@@ -292,6 +292,17 @@ export const demoRuns = [
     duration: "Not recorded",
     trigger: "Repair rejected",
   },
+  {
+    id: "run_fixture_layout_b_codex_recovered",
+    time: "23 Aug 2026 · verified",
+    collector: "Owned layout B healing lab",
+    collectorId: healingLabCollectorId,
+    status: "Recovered",
+    rows: 3,
+    delta: "+3",
+    duration: "Recorded evidence",
+    trigger: "Codex-assisted proposal / approval-gated Bright Data repair",
+  },
 ];
 
 export const incident = {
@@ -299,34 +310,36 @@ export const incident = {
   collectorId: healingLabCollectorId,
   collectorName: "Owned layout B healing lab",
   company: "CareerSentry Healing Lab",
-  status: "Needs review" as const,
-  opened: "21 Aug 2026 · evidence",
-  summary: "The project-owned layout B fixture returned zero rows after a non-empty layout A baseline. A repair attempt failed verification and left the collector unchanged.",
-  severity: "High" as const,
+  status: "Recovered" as const,
+  opened: "23 Aug 2026 · verified",
+  summary: "The project-owned layout B regression was repaired on the same Collector ID. The saved post-approval run returned all three roles and passed CareerSentry's schema adapter.",
+  severity: "Resolved" as const,
   failedChecks: [
-    { label: "Row-count anomaly", value: "0 rows", detail: "3 baseline rows → 0 current rows", state: "fail" },
-    { label: "Required field coverage", value: "0%", detail: "No records available to validate", state: "fail" },
+    { label: "Post-approval row count", value: "3 rows", detail: "CS-101 through CS-103", state: "pass" },
+    { label: "Required field coverage", value: "100%", detail: "All adapter-normalized fields valid", state: "pass" },
     { label: "Provenance allow-list", value: "Pass", detail: "All fixture URLs remain on career-sentry.vercel.app", state: "pass" },
-    { label: "Saved repair verification", value: "Rejected", detail: "The attempted layout B repair failed before save", state: "warn" },
+    { label: "Saved repair verification", value: "Pass", detail: "Same-ID full run completed after approval", state: "pass" },
   ],
   brokenSample: {
     title: "Owned layout B fixture",
     url: "https://career-sentry.vercel.app/demo-target?layout=b",
-    note: "The controlled project-owned redesign is retained as healing evidence; it is not an external employer catalog.",
+    note: "The controlled project-owned redesign produced the original zero-row regression and is retained alongside the verified repair.",
   },
-  prompt: "On the CareerSentry-owned layout B fixture, preserve the existing Collector ID and schema. Compare the empty result with the known-good layout A evidence, restore enumeration for the three fixture roles, and validate required fields, canonical fixture URLs, and duplicate rate before any save. Keep the repair bounded to the owned fixture and do not access application or personal-data surfaces.",
+  prompt: "Repair the CareerSentry-owned Layout B extraction on the stable input. Iterate every section.role-tile, extract the labeled role fields, retain the allowlisted Bright Data aliases, and require a complete same-ID post-approval run before recovery is accepted.",
   preview: {
     before: { rows: 3, coverage: 100, duplicates: "0.0%" },
-    after: { rows: 0, coverage: 0, duplicates: "n/a" },
-    duration: "Not recorded",
+    after: { rows: 3, coverage: 100, duplicates: "0.0%" },
+    duration: "Recorded evidence",
   },
   timeline: [
     { time: "09:05", title: "Layout A baseline retained", detail: "Three fixture roles with complete required fields", state: "success" },
     { time: "09:12", title: "Layout B run completed", detail: "Zero rows returned from the same owned target", state: "error" },
     { time: "09:14", title: "Health engine opened incident", detail: "Row-count and required-field checks failed", state: "error" },
-    { time: "09:18", title: "Repair rejected", detail: "Saved-template verification failed; Collector ID remained unchanged", state: "info" },
+    { time: "09:18", title: "Earlier repair rejected", detail: "Invalid schema proposal was retained as failure evidence", state: "info" },
+    { time: "21:31", title: "Codex-assisted diff approved", detail: "Known aliases passed the deterministic adapter gate", state: "info" },
+    { time: "21:32", title: "Layout B recovery verified", detail: "Three distinct adapter-valid rows returned on the same Collector ID", state: "success" },
   ],
 };
 
-export const overviewSparkline = [15, 10, 0, 3, 0];
-export const coverageSparkline = [67, 100, 0, 100, 0];
+export const overviewSparkline = [15, 10, 0, 3, 0, 3];
+export const coverageSparkline = [67, 100, 0, 100, 0, 100];

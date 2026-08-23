@@ -1,0 +1,144 @@
+{
+  "evidence_type": "owned_layout_b_codex_assisted_healing_verified",
+  "date": "2026-08-23",
+  "collector_id": "c_mt5mfwuv2910ltr23s",
+  "target_url": "https://career-sentry.vercel.app/demo-target/live",
+  "fixture_layout_during_attempt": "b",
+  "fixture_deployment_id": "dpl_3n9Q9rtjddgHUaeUk28hvQUV7E9R",
+  "preflight": {
+    "layout_a_cards": 0,
+    "layout_b_tiles": 3,
+    "fixture_ids": ["CS-101", "CS-102", "CS-103"],
+    "required_labels_present": ["Based in", "Role type", "Requisition"]
+  },
+  "local_codex_proposal": {
+    "execution": "isolated temporary workspace; read-only; sanitized evidence only",
+    "repair_scope": "selector_and_schema",
+    "local_gate": "reviewable; human approval required",
+    "external_mutations": 0
+  },
+  "self_healing": {
+    "progress_id": "ia_mt613foho2n2ht4dq",
+    "approval_gate_status": "pending_answer",
+    "approval_gate_step": "user_approval",
+    "preview_semantics": "two representative samples; not a full-run row-count assertion",
+    "preview_sample_ids": ["CS-101", "CS-102"],
+    "diff_summary": {
+      "before_steps": 2,
+      "after_steps": 1,
+      "after_iteration": "section.role-tile -> collect every parsed tile",
+      "after_selectors": [
+        "h2 a",
+        ".role-tile__team",
+        "strong value following Based in",
+        "strong value following Role type",
+        "strong value following Requisition"
+      ],
+      "old_job_card_selectors_remaining": false,
+      "navigation_target_changed": false,
+      "output_schema_changed": false,
+      "final_fields": [
+        "role_id",
+        "title",
+        "team",
+        "location",
+        "employment_type",
+        "official_role_url",
+        "product_page_url"
+      ]
+    },
+    "approval": {
+      "approved": true,
+      "auto_save": true,
+      "status": "done",
+      "completed_steps": 8
+    }
+  },
+  "post_approval_verification": {
+    "response_id": "d2t1787503215669rtqporngomcg",
+    "row_count": 3,
+    "distinct_ids": 3,
+    "ids": ["CS-101", "CS-102", "CS-103"],
+    "distinct_official_urls": 3,
+    "all_official_urls_https_same_origin": true,
+    "raw_fields": [
+      "role_id",
+      "title",
+      "team",
+      "location",
+      "employment_type",
+      "official_role_url",
+      "product_page_url",
+      "input"
+    ],
+    "rows": [
+      {
+        "role_id": "CS-101",
+        "title": "Backend Engineer",
+        "team": "Engineering",
+        "location": "Bangalore, Karnataka, India",
+        "employment_type": "Full-time",
+        "official_role_url": "https://career-sentry.vercel.app/demo-target/jobs/CS-101"
+      },
+      {
+        "role_id": "CS-102",
+        "title": "Software Engineer II",
+        "team": "Platform",
+        "location": "Remote, India",
+        "employment_type": "Full-time",
+        "official_role_url": "https://career-sentry.vercel.app/demo-target/jobs/CS-102"
+      },
+      {
+        "role_id": "CS-103",
+        "title": "Data Quality Engineer",
+        "team": "Data",
+        "location": "Bengaluru, Karnataka, India",
+        "employment_type": "Full-time",
+        "official_role_url": "https://career-sentry.vercel.app/demo-target/jobs/CS-103"
+      }
+    ],
+    "adapter_validation": {
+      "normalized_rows": 3,
+      "canonical_fields": [
+        "job_id_value",
+        "title",
+        "location",
+        "department",
+        "employment_type",
+        "company_job_url"
+      ],
+      "aliases_applied": {
+        "role_id": "job_id_value",
+        "team": "department",
+        "official_role_url": "company_job_url"
+      },
+      "metadata_ignored": ["product_page_url", "input"],
+      "validation_errors": 0
+    }
+  },
+  "fixture_semantic_disclosure": {
+    "live_listing_role_type": "Full-time for all three roles",
+    "old_detail_page_field": "work arrangement: Hybrid, Remote, Onsite",
+    "explanation": "The healed one-stage collector reads the listing's Role type. The old two-stage collector populated employment_type from a different detail-page concept. Earlier local evidence mixed these expectations and is retained as historical failure evidence."
+  },
+  "restoration": {
+    "fixture_layout": "a",
+    "deployment_id": "dpl_DxU8ZbEYPCmn43cZSHkZGr5cN3JN",
+    "layout_a_cards": 3,
+    "layout_b_tiles": 0,
+    "persisted_revrag_roles_still_visible": 13
+  },
+  "usage_ledger": {
+    "self_healing_requests": 1,
+    "approvals_and_saves": 1,
+    "post_approval_collector_runs": 1,
+    "fixture_deployments": 2,
+    "retries": 0,
+    "replacement_collectors": 0,
+    "rev_rag_runs": 0,
+    "postgresql_mutations": 0,
+    "credit_conversion": "unavailable; operation counts are authoritative"
+  },
+  "status": "layout_b_recovery_verified",
+  "sanitization": "CareerSentry-owned fictional job data and non-secret operation identifiers only; no credentials, account email, candidate data, or application routes."
+}

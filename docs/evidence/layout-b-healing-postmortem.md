@@ -3,7 +3,13 @@
 Date: 2026-08-23
 Collector: `c_mt5mfwuv2910ltr23s`
 Target: `https://career-sentry.vercel.app/demo-target/live`
-Status: unresolved; no further live attempt is authorized without a new decision.
+Status: historical failure analysis; a later adapter-aware attempt verified recovery on the same Collector ID.
+
+## Later resolution
+
+After this postmortem, CareerSentry implemented the allowlisted schema adapter and a local Codex proposal boundary. One separately authorized attempt then accepted the inspected alias-compatible diff. The post-approval Layout-B run returned exactly three distinct rows on `c_mt5mfwuv2910ltr23s`, and the adapter normalized all three without errors. See [`layout-b-codex-assisted-success.json`](./layout-b-codex-assisted-success.json).
+
+The earlier rejected attempts remain failures; the later success does not rewrite their outcomes. It does show that rejecting the aliases outright was too strict once CareerSentry had a deterministic normalization and validation boundary.
 
 ## What happened
 
@@ -51,8 +57,8 @@ This does not retroactively make the rejected healing attempt successful. That p
 - No post-approval result was described as successful.
 - The fixture was restored to layout A after the experiment.
 
-## Correct next-attempt discipline (not authorized)
+## Correct next-attempt discipline used later
 
-If a new attempt is later approved, it should use the selector-only prompt and gates in [`layout-b-next-plan.md`](./layout-b-next-plan.md). The operator should inspect the generated diff and treat the preview as representative field evidence only. Full row count, duplicates, provenance, and unchanged downstream shape must be verified by the one post-approval B run.
+The later attempt used the gates in [`layout-b-next-plan.md`](./layout-b-next-plan.md): inspect the generated diff, treat preview rows as representative field evidence only, and decide recovery from the one complete post-approval B run. The adapter preserved the downstream shape even though Bright Data retained its own alias labels.
 
 Bright Data's documented flow is asynchronous: trigger Self-Healing, poll progress, review the proposed change, approve or reject it, then collect again. See the [CLI healing reference](https://github.com/brightdata/cli#scraper-heal), [Self-Healing API](https://docs.brightdata.com/api-reference/scraper-studio-api/ai-flow/trigger-self-healing), and [approval API](https://docs.brightdata.com/api-reference/scraper-studio-api/ai-flow/resume-self-healing-job).

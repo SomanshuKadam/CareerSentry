@@ -29,7 +29,9 @@ describe("public UI contract", () => {
 
     expect(pages).not.toMatch(/matchScore|demoProfile|save example match|tune matching/i);
     expect(pages).toContain("does not store application forms");
-    expect(pages).toContain("we do not claim that this repair succeeded");
+    expect(pages).toContain("3 rows restored");
+    expect(pages).toContain("schema adapter normalized every row");
+    expect(pages).not.toMatch(/recovery status[^]*not complete/i);
   });
 
   it("redirects every retired or previously dead destination", () => {

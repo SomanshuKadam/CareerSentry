@@ -1,0 +1,118 @@
+{
+  "bundleVersion": "1",
+  "evidenceType": "codex_healing_input",
+  "createdAt": "2026-08-23T12:00:00.000Z",
+  "collectorId": "c_mt5mfwuv2910ltr23s",
+  "targetUrl": "https://career-sentry.vercel.app/demo-target/live",
+  "source": {
+    "kind": "owned_fixture",
+    "label": "CareerSentry stable layout A/B healing lab"
+  },
+  "failure": {
+    "kind": "zero_rows_after_markup_change",
+    "baselineRows": 3,
+    "observedRows": 0,
+    "summary": "The same Collector ID returned three rows on layout A and zero rows after the server-rendered fixture changed to layout B. The B page still exposes three fictional roles, so this is an extraction failure rather than an empty catalog."
+  },
+  "canonicalFields": [
+    "job_id_value",
+    "title",
+    "location",
+    "department",
+    "employment_type",
+    "company_job_url"
+  ],
+  "knownGoodRows": [
+    {
+      "job_id_value": "CS-101",
+      "title": "Backend Engineer",
+      "location": "Bangalore, Karnataka, India",
+      "department": "Engineering",
+      "employment_type": "Hybrid",
+      "company_job_url": "https://career-sentry.vercel.app/demo-target/jobs/CS-101"
+    },
+    {
+      "job_id_value": "CS-102",
+      "title": "Software Engineer II",
+      "location": "Remote, India",
+      "department": "Platform",
+      "employment_type": "Full-time",
+      "company_job_url": "https://career-sentry.vercel.app/demo-target/jobs/CS-102"
+    },
+    {
+      "job_id_value": "CS-103",
+      "title": "Data Quality Engineer",
+      "location": "Bengaluru, Karnataka, India",
+      "department": "Data",
+      "employment_type": "Onsite",
+      "company_job_url": "https://career-sentry.vercel.app/demo-target/jobs/CS-103"
+    }
+  ],
+  "observedRows": [],
+  "representativePreviewRows": [
+    {
+      "role_id": "CS-101",
+      "title": "Backend Engineer",
+      "team": "Engineering",
+      "location": "Bangalore, Karnataka, India",
+      "employment_type": "Hybrid",
+      "official_role_url": "https://career-sentry.vercel.app/demo-target/jobs/CS-101",
+      "product_page_url": "https://career-sentry.vercel.app/demo-target/jobs/CS-101"
+    }
+  ],
+  "diffSummary": {
+    "changedParserSelectors": [
+      "section.role-tile",
+      "h2 a",
+      ".role-tile__team",
+      "Based in",
+      "Role type",
+      "Requisition"
+    ],
+    "finalEmittedFields": [
+      "role_id",
+      "title",
+      "team",
+      "location",
+      "employment_type",
+      "official_role_url",
+      "product_page_url"
+    ],
+    "rejectedReasons": [
+      "The proposal changed the established six-field raw output contract.",
+      "The representative preview cannot establish full-run row count.",
+      "No post-approval verification was run because the proposal was rejected before save."
+    ]
+  },
+  "observations": {
+    "knownGoodSelectors": [
+      ".job-card",
+      "h3 a",
+      ".job-card__department",
+      "Location",
+      "Employment type",
+      "Requisition"
+    ],
+    "changedSelectors": [
+      "section.role-tile",
+      "h2 a",
+      ".role-tile__team",
+      "strong value following Based in",
+      "strong value following Role type",
+      "strong value following Requisition"
+    ],
+    "changedMarkupFacts": [
+      "The page contains three role-tile elements for CS-101 through CS-103.",
+      "The page contains zero job-card elements.",
+      "The B page is public, fictional, same-origin, and contains no forms or personal data.",
+      "Preview rows are representative samples and are not full-run enumeration evidence."
+    ]
+  },
+  "constraints": {
+    "secretsRedacted": true,
+    "brightDataMutationAuthorized": false,
+    "databaseMutationAuthorized": false,
+    "requiresHumanApproval": true,
+    "maxPromptCharacters": 1000
+  }
+}

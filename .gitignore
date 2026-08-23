@@ -10,6 +10,8 @@ node_modules/
 dist/
 coverage/
 *.tsbuildinfo
+artifacts/codex-healing/
+artifacts/brightdata-healing/
 
 # Logs and local data
 *.log

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import rejectedPreview from "../docs/evidence/layout-b-api-heal-rejected.json";
+import verifiedRecovery from "../docs/evidence/layout-b-codex-assisted-success.json";
 import {
   BrightDataIngestionError,
   mapScraperStudioRows,
@@ -22,7 +23,7 @@ const layoutBContractRows = [
     title: "Backend Engineer",
     location: "Bangalore, Karnataka, India",
     department: "Engineering",
-    employment_type: "Hybrid",
+    employment_type: "Full-time",
     company_job_url: "https://career-sentry.vercel.app/demo-target/jobs/CS-101",
   },
   {
@@ -38,7 +39,7 @@ const layoutBContractRows = [
     title: "Data Quality Engineer",
     location: "Bengaluru, Karnataka, India",
     department: "Data",
-    employment_type: "Onsite",
+    employment_type: "Full-time",
     company_job_url: "https://career-sentry.vercel.app/demo-target/jobs/CS-103",
   },
 ] as const;
@@ -70,6 +71,27 @@ describe("next layout-B healing contract", () => {
         "https://career-sentry.vercel.app/demo-target/jobs/CS-101",
     });
     expect(records[0]).not.toHaveProperty("product_page_url");
+  });
+
+  it("validates the complete post-approval Layout-B recovery through the adapter", () => {
+    expect(verifiedRecovery.status).toBe("layout_b_recovery_verified");
+    expect(verifiedRecovery.post_approval_verification.row_count).toBe(3);
+
+    const records = mapScraperStudioRows(
+      verifiedRecovery.post_approval_verification.rows,
+      metadata,
+    );
+
+    expect(records).toHaveLength(3);
+    expect(records.map((record) => record.jobId)).toEqual([
+      "CS-101",
+      "CS-102",
+      "CS-103",
+    ]);
+    expect(records.every((record) => record.employmentType === "Full-time")).toBe(true);
+    expect(verifiedRecovery.fixture_semantic_disclosure.old_detail_page_field).toContain(
+      "Hybrid, Remote, Onsite",
+    );
   });
 
   it("rejects conflicting approved aliases instead of guessing", () => {

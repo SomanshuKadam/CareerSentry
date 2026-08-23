@@ -112,18 +112,37 @@ npm run db:migrate
 
 The evidence is intentionally honest: the RevRag history records the completed initial run, approval-gated same-ID cleanup, and verified recovery, while the layout A/B run is explicitly project-owned healing evidence. Neither surface contains application interactions or personal data.
 
-## Three-minute demo
+## Real live-healing demo
 
-First show the production [Jobs](https://career-sentry.vercel.app/jobs) page with the persisted RevRag roles and the [Reliability](https://career-sentry.vercel.app/reliability) page. Then run these commands one at a time while narrating:
+The demo is prepared as a one-shot live sequence. First show the production [Jobs](https://career-sentry.vercel.app/jobs) page with the persisted RevRag roles and the [Reliability](https://career-sentry.vercel.app/reliability) page. Then run these commands individually from the repository root:
 
 ```bash
-npm run demo:baseline
-npm run demo:failure
-npm run demo:heal
-npm run demo:verify
+npm.cmd run demo:live:baseline
+npm.cmd run demo:live:layout-b
+npm.cmd run demo:live:failure
+npm.cmd run demo:live:codex
+npm.cmd run demo:live:heal
+npm.cmd run demo:live:review
+npm.cmd run demo:live:approve
+npm.cmd run demo:live:verify
+npm.cmd run demo:live:restore
 ```
 
-The commands separately show the authentic three-row baseline, zero-row layout-change incident, Codex-assisted proposal and human approval, and verified three-row recovery. They read checked-in sanitized evidence and perform no live deployment, Bright Data operation, collector mutation, RevRag run, or database write. This keeps the three-minute recording repeatable without deliberately breaking the repaired collector.
+| Command | Real operation and required result |
+|---|---|
+| `demo:live:baseline` | Verifies Layout A is public, runs the Bright Data collector, and requires three live rows. |
+| `demo:live:layout-b` | Deploys the real production fixture with materially different Layout-B markup. |
+| `demo:live:failure` | Verifies three B tiles still exist, runs the unchanged collector, requires zero rows, and builds fresh sanitized Codex input from that failure. |
+| `demo:live:codex` | Invokes local `codex exec` and writes a new structured repair proposal; it does not mutate Bright Data. |
+| `demo:live:heal` | Sends the Codex proposal to the real Bright Data Self-Healing API with the stable URL in `custom_input`, then stops at human approval. |
+| `demo:live:review` | Checks the actual retained diff, preview fields, B selectors, and adapter contract. It rejects incompatible proposals. |
+| `demo:live:approve` | Approves and saves the pending Bright Data repair on the same Collector ID. |
+| `demo:live:verify` | Runs the repaired collector and requires the three expected, complete, same-origin rows. |
+| `demo:live:restore` | Restores the public fixture to Layout A after recording. |
+
+These are real operations, not an evidence replay. They run the Bright Data collector on Layout A, deploy Layout B, prove the same collector returns zero rows, generate a fresh sanitized failure bundle, invoke local `codex exec`, send its bounded prompt to Bright Data with the stable URL as `custom_input`, stop for deterministic and human review, approve/save the proposed repair, run the same Collector ID again, require all three fixture IDs, and restore Layout A. Generated artifacts remain ignored under `artifacts/`.
+
+Bright Data AI processing can take several minutes. For a three-minute submitted video, keep the real terminal output but use a visible jump cut over polling time. Never rehearse the live sequence casually: it spends Bright Data credits and changes both production fixture and collector state. If any stage fails, stop rather than continuing to approval or verification; if Layout B is already public, still run `demo:live:restore`. On macOS/Linux, use `npm` in place of `npm.cmd`.
 
 ## Architecture
 
